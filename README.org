@@ -1,0 +1,116 @@
+* 简介
+包管理器，由原生的package改为Borg，配置保持不变，基于此维护一份 （单独维护，待改造完成后，再合并回原版本，原版本打个版本号，或者重新放个仓库备份）
+
+Borg使用的是同化包，并且使用submodule来管理版本，结合Magit使用 （手动管理包及依赖）
+
+默认使用ssh协议，需正确设置密钥
+
+当前版本borg：Support using a submodule as user-emacs-directory
+
+将之前的配置搬过来，也算是将配置又整理了一遍，borg管理时，统一放到init.el中
+(use-package管理配置)
+
+[Borg]:    https://github.com/emacscollective/borg
+[manual]:  https://emacsmirror.net/manual/borg
+[Github]:  https://github.com/emacscollective/emacs.g
+
+* Borg官网及文档
+这个collective是基于borg的初始化版本，见https://github.com/emacscollective/emacs.g
+
+关于borg的说明文档，见https://emacsmirror.net/manual/borg/Bootstrapping-using-a-seed.html
+
+有两种方式构建：
+1. 从头开始构建：可以了解到初始化borg的流程，及相关依赖
+2. 使用这个collective构建（emacs.g）：这个主要是为了简化borg的初始化部分，包含了相关依赖
+   1) 基于这个进行后续包的同化操作
+
+* Borg维护及相关操作
+存放目录，可通过设置git变量 =borg.drones-directory= 来设置，默认为lib/  （可将borg作为第二包管理器，此时默认目录为borg/）
+
+相关命令说明：
+- borg-initialize 初始化同化包 (submodule.DRONE.disabled=true来临时禁用)
+- borg-activate 初始化同化及非同化包 （激活）
+- borg-assimilate 同化三方包，将包添加为子模块并尝试构建无人机 build drone  （epkg可用时会读取元数据，否则提供url）
+  - borg-clone 只克隆不同化，可继续执行borg-assimilate进行同化
+  - borg-remove 删除克隆或同化的包  -- git目录未删除
+  - 构建无人机时由于缺少依赖项，可能会失败。构建失败即同化失败
+  - 解决依赖问题，将依赖包也进行同化，再次进行编译
+  - 特殊：使用前缀时，只会添加子模块，不会构建和激活，需配置构建步骤后使用borg-build完成同化
+- borg-build / make lib/DRONE 重新构建失败的无人机，直到成功
+  - make build 重新构建所有
+  - 为避免失败，同化前建议先检查依赖，通过 =epkg-describe-package=
+- 同化完成（即构建成功），提交来完成 （一次提交只提交同化的相关包及依赖，不要包含很多）
+  - 提交消息，可通过 =borg-insert-update-message= 来生成提交消息约定
+- brog-update-autoloads 更新无人机的autoloads文件
+- borg-compile 编译无人机
+- borg-maketexi 从无人机的Org文件生成Texinfo文件 （路径及规则见文档）
+- borg-makeinfo 生成信息手册及索引，方便查询帮助
+- borg-batch-rebuild 根据字母顺序重建所有同化无人机，不适合交互使用，make build中使用
+  - 不会构建 submodule.DRONE.build-step无人机
+  - borg-batch-rebuild-init 同上，见文档
+
+** 初始化操作顺序
+- clone & cd ~/.emacs.d
+- make bootstrap-borg
+- make bootstrap  (make bootstrap | tee bootstrap.log)
+  - 引导期间最后一个命令为 =git submodule status= ，每个模块一行，+表示无法签出 -表示无法克隆
+
+
+** 同化包及移除包
+- borg-assimilate
+- borg-remove
+
+  
+** 批量drones更新 (submodule)
+不提供更新命令，可以使包保持在某个版本，而不是最新版本，适合进行版本控制，来决定是否升级到最新版本，出问题后，可以回滚到之前版本
+
+- =f m= 获取所有子模块，会列出有更新的模块 unpulled form
+- 可进入子模块单独拉取 =F u= ，拉取前可进行检查，不一定非得是HEAD
+- 更新后，需重建无人机 =borg-build= （若有新依赖，会失败，解决后提交消息） -- 消息同样可用上面的命令生成
+- 更新epkg包数据库，使用 =epkg-update=
+
+#+begin_src bash
+cd ~/.emacs.d
+git submodule update --init ./lib/<package-name> # Optionally
+git submodule foreach git pull # Update each submodule to latest commit
+
+make clean # remove all byte-code and native files
+make build # byte-compile all drones and init files
+
+make help # show brief help
+#+end_src
+
+** 单个drones处理
+- borg-remove
+- borg-assimilate (borg-clone/borg-build/borg-activate)
+- make lib/DRONE 单独编译
+  - make build/DRONE
+  - make native/DRONE
+
+
+** Makefile
+- 里面可定制不同的组，如make profile，在make时指定组名即可执行对应的命令
+- 可根据情况再加命令，方便后期维护
+- make help 查看make帮助，显示结果应该是针对borg的
+
+** 注意事项
+1. borg中init.el不能使用with-temp-message，否则make bootstrap时有问题，看不到最终状态的输出
+2. 部分包是在子目录中，如vertico，需要在gitmodules中增加load-path
+   1. 参考nowislewis/eason0210两个配置中的gitmodules，部分包进行对应的调整
+   2. load-path/no-byte-compile
+3. 启动时间很长
+   1. 删除elpa，borg方式不再使用此种方式 (删除所有包配置中的ensure demand)  -- 已同化为内置包
+   2. 通过benchmark测试，可以发现问题点，主要是因为find-dired，而这个是因为fd-dired这个包，去掉后由24s-》4s。其他的再慢慢据情况优化
+      1. tabulated 表视图：ms为本身加载时间 total(ms) 为本身及依赖加载时间
+      2. tree 树型视图：可以看到加载顺序，以及依赖的加载时间
+   3. lisp/init-*.el 看不出是哪个包的启动时间问题，考虑将代码移动到init.el中，再使用profile-dotemacs，解决后再恢复
+   4. 将有些包移到一个文件中，profile-dotemacs没检测出时间，看来有必要减少文件数量
+4. 各个包使用不清楚的，直接github看README文档，更直接更快
+5. 关于本机编译： (native-comp-avaliable-p)结果为nul， 需要emacs自行编译的才行，brew安装的应该是没用
+6. elpa目录会一直有东西生成，删除后又会被重建出来
+   1. 正常时没有，注意观察看什么时候会生成，随时看下，最好处理掉
+
+   
+
+** 帮助文档
+- 各个包的README文档，已经集成到INFO中，可通过C-h i来搜索查看
