@@ -102,6 +102,7 @@
                 "\\|^.DS_Store$\\|^.projectile$\\|^.git*\\|^.svn$\\|^.vscode$\\|\\.js\\.meta$\\|\\.meta$\\|\\.elc$\\|^.emacs.*")))
 
 ;; 使用`fd'来替换`find-dired'
+;; 不能使用，会导致启动时间无限长，dire使用的是ls
 ;; (use-package fd-dired
 ;;   :when (executable-find "fd"))
 

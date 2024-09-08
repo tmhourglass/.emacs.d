@@ -58,8 +58,6 @@
       (remq 'process-kill-buffer-query-function
             kill-buffer-query-functions))
 
-;; 查找项目目录
-(setq project-find-functions '(my/project-try-local project-try-vc))
 
 
 ;; 禁用本地编译

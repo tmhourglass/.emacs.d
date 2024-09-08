@@ -32,3 +32,6 @@ private.el
 /etc/history
 /etc/places
 /tree-sitter
+# borg中的命令不适合Macbook，修改过，所以不进行版本管理
+# borg.sh 通过重新编译安装realpath.c，支持了--relative-to选项
+#/lib/borg

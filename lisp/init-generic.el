@@ -153,6 +153,13 @@
 (global-auto-revert-mode t)
 
 
+
+;; 查找本地项目目录 -- 通过自定义的.project
+;; 必须有，否则找不到项目目录，eglot报错
+(setq project-find-functions '(my/project-try-local project-try-vc))
+
+
+
 (provide 'init-generic)
 
 ;;; init-generic.el ends here
