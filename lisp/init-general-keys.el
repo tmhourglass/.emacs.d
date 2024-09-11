@@ -107,7 +107,7 @@
     "R" 'rename-buffer
     "f" 'my-open-current-directory
     ;; "k" 'kill-buffer
-    "k" 'kill-current-buffer
+    "k" 'kill-current-buffer            ; 等效于command+k，默认支持的按键
     "K" 'kill-other-buffers
     ;; =========bookmark============
     "m" 'bookmark-set
