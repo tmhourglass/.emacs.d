@@ -189,7 +189,7 @@
 (use-package keycast
   :commands (+toggle-keycast)
   :config
-  (defun +toggle-keycast()
+  (defun toggle-keycast()
     (interactive)
     (if (member '("" keycast-mode-line " ") global-mode-string)
         (progn (setq global-mode-string (delete '("" keycast-mode-line " ") global-mode-string))

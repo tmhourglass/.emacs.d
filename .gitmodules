@@ -60,6 +60,9 @@
 [submodule "closql"]
 	path = lib/closql
 	url = https://github.com/magit/closql.git
+[submodule "command-log-mode"]
+	path = lib/command-log-mode
+	url = https://github.com/lewang/command-log-mode
 [submodule "company"]
 	path = lib/company
 	url = https://github.com/company-mode/company-mode

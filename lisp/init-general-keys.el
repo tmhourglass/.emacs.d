@@ -170,6 +170,7 @@
     "J" 'buf-move-down
     "K" 'buf-move-up)
 
+  ;; 触发部分特殊功能或模式
   (+general-global-menu! "toggle" "t"
     "s" 'flycheck-mode
     "S" 'flyspell-prog-mode
@@ -178,7 +179,9 @@
     "n" 'my-toggle-line-numbber         ;触发行号
     ;; "w" 'writeroom-mode
     "w" 'prose-mode                     ;启动专注写作模式
-    "k" '+toggle-keycast                ;keycast
+    "k" 'toggle-keycast                 ;触发keycast
+    ;; command-log-buffer有三个命令 open/close/toggle   -- M-x tclb
+    ;; "k" 'clm/toggle-command-log-buffer ;手动触发命令日志窗口，垂直分隔，若带前缀，则清空 （看函数定义）
     "c" 'global-corfu-mode              ;全局corfu模式
     "m" 'consult-minor-mode-menu)
 
