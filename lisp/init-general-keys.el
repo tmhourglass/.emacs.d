@@ -41,9 +41,10 @@
     "qR" 'restart-emacs
     "hh" 'zilongshanren/highlight-dwim
     "hc" 'zilongshanren/clearn-highlight
-    "en" 'my-goto-next-error
     "ry" 'consult-yank-pop              ;M-y
     "R" 'my/run-current-file            ;在shell中运行当前文件
+    ;; 错误处跳转，先使用SPC t s激活flycheck-mode才能使用
+    "en" 'my-goto-next-error
     "ep" 'my-goto-previous-error
     "el" 'my-list-errors)
 
