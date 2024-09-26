@@ -24,16 +24,25 @@
 
 
 ;; Centaur
-;; (use-package fanyi
-;;   :bind (("C-c d f" . fanyi-dwim)
-;;          ("C-c d d" . fanyi-dwim2)
-;;          ("C-c d h" . fanyi-from-history))
-;;   :custom (fanyi-providers '(fanyi-haici-provider
-;;                              fanyi-youdao-thesaurus-provider
-;;                              fanyi-etymon-provider
-;;                              fanyi-longman-provider)))
+;; 另一种翻译，选择使用
+;; 分别提供4种字典，速度上有点慢，也可使用
+(use-package fanyi
+  :bind (("C-c d f" . fanyi-dwim)
+         ("C-c d d" . fanyi-dwim2)
+         ("C-c d h" . fanyi-from-history))
+  :custom
+  (fanyi-providers '(;; 海词
+                     fanyi-haici-provider
+                     ;; 有道同义词词典
+                     fanyi-youdao-thesaurus-provider
+                     ;; Etymonline - 英英词典
+                     fanyi-etymon-provider
+                     ;; Longman - 英英词典
+                     fanyi-longman-provider)))
 
-;; 设置三个翻译器，使用函数来调用
+
+;; 设置三个翻译器，使用函数来调用，选择使用
+;; 新增同化包posframe
 (use-package go-translate
   :bind (("C-c d g" . gt-do-translate)
          ("C-c d G" . gt-do-translate-prompt)
@@ -90,15 +99,18 @@
             (Text-Utility . ,(gt-text-utility :taker (gt-taker :pick nil)
                                               :render (gt-buffer-render)))))
 
+    ;; 结合posframe弹窗来显示当前光标处的单词
     (defun gt--do-translate (dict)
       "Translate using DICT from the preset tranlators."
       (gt-start (alist-get dict gt-preset-translators)))
 
+    ;; 通过提示来查询其他单词，使用多字典
     (defun gt-do-translate-prompt ()
       "Translate with prompt using the multiple dictionaries."
       (interactive)
       (gt--do-translate 'multi-dict))
 
+    ;; 文本编码 md5/base64/sha1
     (defun gt-do-text-utility ()
       "Handle the texts with the utilities."
       (interactive)

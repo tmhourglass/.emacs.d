@@ -215,6 +215,9 @@
 [submodule "f"]
 	path = lib/f
 	url = https://github.com/rejeep/f.el
+[submodule "fanyi"]
+	path = lib/fanyi
+	url = https://github.com/condy0919/fanyi.el
 [submodule "fd-dired"]
 	path = lib/fd-dired
 	url = https://github.com/yqrashawn/fd-dired
@@ -448,6 +451,9 @@
 [submodule "popup"]
 	path = lib/popup
 	url = https://github.com/auto-complete/popup-el
+[submodule "posframe"]
+	path = lib/posframe
+	url = https://github.com/tumashu/posframe
 [submodule "prodigy"]
 	path = lib/prodigy
 	url = https://github.com/rejeep/prodigy.el
