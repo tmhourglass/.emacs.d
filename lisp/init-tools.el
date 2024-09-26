@@ -187,7 +187,7 @@
 (use-package link-hint)
 
 (use-package keycast
-  :commands (+toggle-keycast)
+  :commands (toggle-keycast)
   :config
   (defun toggle-keycast()
     (interactive)
