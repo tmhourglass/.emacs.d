@@ -491,6 +491,8 @@ open and unsaved."
   (symbol-overlay-remove-all))
 
 ;; 扩展选区
+;; 这个函数只是er/expand-region的引用
+;; mc/mark-next-like-this  -- multiple-cursors
 ;;;###autoload
 (defun my/my-mc-mark-next-like-this ()
   (interactive)

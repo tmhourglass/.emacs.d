@@ -50,6 +50,7 @@
 ;;   (global-set-key (kbd "C-c y") 'youdao-dictionary-search-at-point+))
 
 
+;; 多点编辑
 (use-package iedit
   :init
   (setq iedit-toggle-key-default nil)
@@ -58,6 +59,16 @@
   (define-key iedit-mode-keymap (kbd "M-i") 'iedit-restrict-current-line))
 
 
+;; 配合多点编辑， mc/edit-lines  mc/edit-ends-of-lines 开头和结尾添加光标，以便编辑
+;; 可替换vim模式下的C-v列编辑模式
+;; 发现个新用法：在区域开头列编辑，按$选中到末尾，再按S "，即可使所有行使用引号包裹
+;; 所有功能以mc/开头，有很多功能，没完全使用到，其他包有依赖使用
+;; 已通过borg同化内置，相关命令可用，若没有配置，下面这行可不用
+;; (use-package multiple-cursors)
+
+
+;; 启用evil模式下多点编辑的默认绑定按键
+;; 当前多点编辑使用这个
 (use-package evil-multiedit
   :commands (evil-multiedit-default-keybinds)
   :init
@@ -65,6 +76,8 @@
 
 
 ;; 扩展选区
+;; 这个也可用于多点编辑，有多种按键 s-d或SPC v 或C-=
+;; 进入该模式时，按e即可进入iedit-mode
 (use-package expand-region
   :config
   (defadvice er/prepare-for-more-expansions-internal

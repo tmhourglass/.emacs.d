@@ -74,7 +74,8 @@
 (global-set-key (kbd "C-c r") 'org-capture)
 
 
-;; 这个使用方式待定
+;; 多点编辑（当前单词） 等同于M-i
+;; 这个用得少，使用s-d/C-=中的e模式
 (global-set-key (kbd "M-s e") 'iedit-mode)
 
 
@@ -87,9 +88,9 @@
 ;; 还原整个buffer
 (global-set-key (kbd "s-r") #'my/revert-this-buffer)
 
-;; 扩展选区 (很好用，可替换v来选择，可一层层扩展选区，可多按几次)
+;; 扩展选区及多点编辑 (很好用，可替换v来选择，可一层层扩展选区，可多按几次)
+;; 有三种快捷键： s-d / C-= / SPC v （哪种顺手用哪种，最后一种也不错）
 (global-set-key (kbd "s-d") 'my/my-mc-mark-next-like-this)
-;; 有另一个按键 s-d
 (global-set-key (kbd "C-=") 'er/expand-region)
 
 ;; 插入当前chrome的tab url
