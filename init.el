@@ -116,6 +116,8 @@
  #'(lambda ()
      (require 'init-tools)
      (require 'init-snippets)
+     ;; 翻译
+     (require 'init-dict)
      ;; Programming
      (require 'init-lsp)
      (require 'init-lisp)

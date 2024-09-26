@@ -1,16 +1,19 @@
-# key: echeader
+# -*- mode: snippet; -*-
 # name: elisp config header and end
+# key: echeader
 # --
-;;; ${init-$1:name}.el --- $1 -*- lexical-binding: t -*-
+;;; init-${1:name}.el --- $1 -*- lexical-binding: t -*-
 
 ;; Author: shaowen he
 
 ;;; Commentary:
 
-;; $2
+;; ${2:commentary}
 
 ;;; Code:
 
-$3
+${3:(message "Hello World!")}
 
-;;; $1.el ends here
+(provide 'init-$1)
+
+;;; init-$1.el ends here

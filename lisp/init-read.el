@@ -127,26 +127,6 @@ typical word processor."
 ;;   :demand t
 ;;   :ensure nil)
 
-;; ~/.authinfo
-;; 使用百度翻译api进行翻译，100W/月  -- 用量短信提醒
-;; brew install translate-shell
-;; 改为使用bing
-(use-package immersive-translate
-  :init
-  ;; (setq immersive-translate-backend 'baidu
-  ;;       immersive-translate-baidu-appid "20240604002069851")
-  (setq immersive-translate-backend 'trans
-        immersive-translate-trans-engine "bing")
-  :config
-  (add-hook 'elfeed-show-mode-hook #'immersive-translate-setup)
-  (add-hook 'nov-pre-html-render-hook #'immersive-translate-setup))
-
-
-;; 翻译
-(use-package go-translate
-  :bind ("C-c t" . gts-do-translate)
-  :custom (gts-translate-list '(("en" "zh"))))
-
 
 (provide 'init-read)
 

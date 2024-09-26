@@ -419,6 +419,9 @@
 [submodule "org-superstar"]
 	path = lib/org-superstar
 	url = https://github.com/integral-dw/org-superstar-mode
+[submodule "osx-dictionary"]
+	path = lib/osx-dictionary
+	url = https://github.com/xuchunyang/osx-dictionary.el
 [submodule "ox-gfm"]
 	path = lib/ox-gfm
 	url = https://github.com/larstvei/ox-gfm
