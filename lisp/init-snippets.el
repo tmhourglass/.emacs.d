@@ -12,14 +12,11 @@
 
 
 ;; Emacs的模板系统，片段语法，不捆绑片段
-;; yas-new-snippet 创建代码片段，放置在~/.emacs.d/snippets
+;; yas-new-snippet 创建代码片段，放置在~/.emacs.d/etc/yasnippet/snippets
 ;; yas-reload-all
 (use-package yasnippet
-  :diminish yas-minor-mode
-  :custom (yas-keymap-disable-hook
-           (lambda () (and (frame-live-p corfu--frame)
-                           (frame-visible-p corfu--frame))))
-  :hook (after-init . yas-global-mode)
+  :hook ((prog-mode . yas-minor-mode)
+         (org-mode . yas-minor-mode))
   :config
   (progn
     (setq hippie-expand-try-functions-list

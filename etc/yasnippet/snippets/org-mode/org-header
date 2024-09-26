@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: org-header
+# key: oh
+# --
+#+TITLE: $1
+#+OPTIONS: ^:nil toc:t
+
+$0

@@ -1,0 +1,16 @@
+# key: echeader
+# name: elisp config header and end
+# --
+;;; ${init-$1:name}.el --- $1 -*- lexical-binding: t -*-
+
+;; Author: shaowen he
+
+;;; Commentary:
+
+;; $2
+
+;;; Code:
+
+$3
+
+;;; $1.el ends here
