@@ -64,10 +64,11 @@
   (+general-global-menu! "open" "o"
     "o" 'zilongshanren/hotspots
     "r" 'org-roam-node-find
-    "c" 'org-capture
+    "c" 'org-capture                    ; 另一个按键C-c r
     "l" 'org-store-link
     "t" 'ansi-term
-    "y" 'my/eudic)
+    ;; "y" 'my/eudic                       ; 不太好用，注释掉
+    )
 
 
   (+general-global-menu! "file" "f"
@@ -200,7 +201,21 @@
     "a" 'project-remember-projects-under
     "x" 'project-forget-project)
 
-
+  ;; 字典相关，将C-c d映射为SPC d，其他保持不变
+  (+general-global-menu! "dict" "d"
+    ;; go-translate
+    "g" 'gt-do-translate                ;无提示，使用posframe显示
+    "G" 'gt-do-translate-prompt         ;提示，多字典显示
+    "u" 'gt-do-text-utility             ;文本编码
+    "p" 'gt-do-speek
+    "s" 'gt-do-setup                    ;显示当前的翻译器配置
+    ;; fanyi
+    "f" 'fanyi-dwim                     ;有提示，默认当前单词，可输入其他单词
+    "d" 'fanyi-dwim2                    ;不提示，默认为当前单词
+    "h" 'fanyi-from-history             ;显示历史
+    ;; osx-dictionary
+    "i" 'osx-dictionary-search-input
+    "x" 'osx-dictionary-search-pointer)
 
 
   (evil-define-key 'normal dired-mode-map
