@@ -73,6 +73,10 @@
     (define-key evil-motion-state-map (kbd "] b") 'next-buffer)
     (define-key evil-normal-state-map (kbd "M-y") 'consult-yank-pop)
 
+    ;; 在Normal模式下， s-f/s-F用于isearch-forward/isearch-backward, 适配Mac的操作
+    ;; 替换原始的C-s/C-r
+
+    ;; 前进后退一个单词和删除删除，适配Mac，使用command按键操作
     (define-key evil-emacs-state-map (kbd "s-f") 'forward-word)
     (define-key evil-insert-state-map (kbd "s-f") 'forward-word)
     (define-key evil-insert-state-map (kbd "C-w") 'evil-delete-backward-word)
