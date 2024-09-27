@@ -23,7 +23,7 @@
   (custom-set-faces
    '(tab-bar ((t (:inherit mode-line))))
    '(tab-bar-tab ((t (:inherit mode-line :foreground "#9acd32"))))
-   '(tab-bar-tab-inactive ((t (:inherit mode-line-inactive :foreground "4d4d4d")))))
+   '(tab-bar-tab-inactive ((t (:inherit mode-line-inactive :foreground "#4d4d4d")))))
 
   (defvar ct/circle-numbers-alist
     '((0 . "⓪")
