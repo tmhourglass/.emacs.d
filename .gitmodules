@@ -472,6 +472,9 @@
 [submodule "quickrun"]
 	path = lib/quickrun
 	url = https://github.com/emacsorphanage/quickrun
+[submodule "rainbow-mode"]
+	path = lib/rainbow-mode
+	url = git@github.com:emacsmirror/rainbow-mode.git
 [submodule "reformatter"]
 	path = lib/reformatter
 	url = https://github.com/purcell/emacs-reformatter

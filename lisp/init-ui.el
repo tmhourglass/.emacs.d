@@ -155,6 +155,10 @@
   :hook (after-init . nyan-mode))
 
 
+;; 在颜色代码上直观显示颜色
+(use-package rainbow-mode
+  :hook ((html-mode css-mode emacs-lisp-mode) . rainbow-mode))
+
 
 (provide 'init-ui)
 
