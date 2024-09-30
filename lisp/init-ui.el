@@ -11,39 +11,12 @@
 
 ;; 使用doom-one主题
 ;; doom-one / doom-tomorrow-night
-;; (use-package doom-themes
-;;   :config
-;;   (doom-themes-org-config)
-
-;;   (let ((theme (if (display-graphic-p)
-;;                    'doom-tomorrow-night
-;;                  'doom-Iosvkem)))
-;;     (load-theme theme t)))
-
-;; 通过consult-theme看到，相关主题已经Loaded，但未启动
-;; 把需要加载的主题放到custom-enabled-themes
-;; doom-one  doom-tomorrow-night
-;; (use-package doom-themes
-;;   :custom
-;;   (custom-safe-themes t)
-;;   (custom-enabled-themes '(doom-one doom-tomorrow-night))
-;;   :config
-;;   (dolist (theme custom-enabled-themes)
-;;     (unless (custom-theme-p theme)
-;;       (load-theme theme t)))
-;;   (doom-themes-org-config))
-
-;; config改为init，否则不生效
 (use-package doom-themes
-  :custom
-  (custom-safe-themes t)
-  :init
-  (let ((theme (if (display-graphic-p)
-                   'doom-one
-                 'doom-Iosvkem)))
-    (load-theme theme t))
-  ;; (doom-themes-org-config)
-  )
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-one t))
 
 
 ;; macos中设置标题栏匹配当前系统主题
