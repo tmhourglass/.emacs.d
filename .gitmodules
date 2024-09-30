@@ -176,6 +176,9 @@
 [submodule "es-windows"]
 	path = lib/es-windows
 	url = https://github.com/sabof/es-windows
+[submodule "esup"]
+	path = lib/esup
+	url = https://github.com/jschaf/esup
 [submodule "esxml"]
 	path = lib/esxml
 	url = https://github.com/tali713/esxml
