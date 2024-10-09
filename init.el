@@ -93,6 +93,7 @@
 (require 'init-dashboard)
 (require 'init-window)
 (require 'init-dired)
+;; (require 'init-dirvish)
 
 ;; Tools
 (require 'init-org)
