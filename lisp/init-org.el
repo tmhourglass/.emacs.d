@@ -177,8 +177,12 @@ object (e.g., within a comment).  In these case, you need to use
               (newline)))))))
 
     ;; 重新定义org-mode中return的行为
-    (define-key org-mode-map (kbd "RET")
-                'my/org-return)
+    (define-key org-mode-map (kbd "RET") 'my/org-return)
+
+    ;; 日志中手动插入日期
+    ;; 放在init-general-keys中不生效，可能因为org未加载
+    (define-key org-mode-map  (kbd "C-c j") 'my/insert-journal-date)
+
 
     ;; 新发现的功能：在org-mode中的nornal下，若当前是列表，按 + 可循环切换列表的编号样式
     (evil-define-key 'normal org-mode-map

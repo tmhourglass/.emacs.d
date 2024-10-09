@@ -59,8 +59,7 @@
     "g" 'xref-find-definitions
     "r" 'xref-find-references
     "m" 'consult-mark
-    "M" 'consult-global-mark
-    )
+    "M" 'consult-global-mark)
 
   (+general-global-menu! "open" "o"
     "o" 'zilongshanren/hotspots
@@ -227,10 +226,8 @@
     "s" 'hydra-dired-quick-sort/body
     "z" 'dired-get-size
     ")" 'dired-omit-mode)
-  )
 
-;; 日志中手动插入日期
-(define-key org-mode-map (kbd "C-c j") 'my/insert-journal-date)
+  )
 
 
 
