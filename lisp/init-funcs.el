@@ -800,6 +800,20 @@ e.g. Sunday, September 17, 2000."
   (interactive (list (read-from-minibuffer "" (format-time-string "%Y-%m-%d %H:%M:%S" (current-time)))))
   (message (kill-new (format-time-string "%s" (seconds-to-time (org-time-string-to-time date))))))
 
+;; 手动插入journal中的日期标题 -- 补日志的情况
+(defun my/insert-journal-date ()
+  "Use Emacs calendar to select a date, insert it in YYYY-MM-DD Day format,"
+  (interactive)
+  ;; Use org-read-date to get the date from the calendar
+  (let* ((selected-date (org-read-date nil t))
+         (timestamp (format-time-string "%Y-%m-%d %A" selected-date)))
+    (insert timestamp)
+    ;; (newline)
+    ;; (forward-line 1)
+    ;; (beginning-of-line)
+    )
+  )
+
 (defun switch-to-scratch-buffer ()
   (interactive)
   (create-scratch-buffer))

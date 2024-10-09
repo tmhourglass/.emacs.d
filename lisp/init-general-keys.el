@@ -229,6 +229,9 @@
     ")" 'dired-omit-mode)
   )
 
+;; 日志中手动插入日期
+(define-key org-mode-map (kbd "C-c j") 'my/insert-journal-date)
+
 
 
 (provide 'init-general-keys)

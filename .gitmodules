@@ -123,6 +123,9 @@
 [submodule "diredfl"]
 	path = lib/diredfl
 	url = https://github.com/purcell/diredfl
+[submodule "dirvish"]
+	path = lib/dirvish
+	url = https://github.com/alexluigit/dirvish
 [submodule "discover-my-major"]
 	path = lib/discover-my-major
 	url = https://framagit.org/steckerhalter/discover-my-major.git
