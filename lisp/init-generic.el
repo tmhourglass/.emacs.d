@@ -67,7 +67,7 @@
 (setq frame-resize-pixelwise t) ;设置缩放的模式,避免Mac平台最大化窗口以后右边和下边有空隙
 (setq save-abbrevs nil)                 ;文件保存时不保存单词缩写
 (setq-default abbrev-mode t)            ;打开缩写模式 - 全局
-(setq find-program "fd")                ;设置查找程序
+;; (setq find-program "fd")                ;设置查找程序
 (setq recenter-positions '(top middle bottom)) ;最近位置循环顺序
 (setq create-lockfiles nil)             ;不使用lockfile
 (setq show-paren-mode t)                ;显示括号模式（似乎有重复）
