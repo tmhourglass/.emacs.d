@@ -145,6 +145,12 @@
 (use-package emmet-mode)
 
 
+;; conda / pythonic
+(use-package conda
+  :init
+  (setq conda-anaconda-home "/opt/anaconda3")
+  :config
+  (conda-env-autoactivate-mode t))
 
 
 (provide 'init-programming)

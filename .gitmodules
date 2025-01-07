@@ -69,6 +69,9 @@
 [submodule "compat"]
 	path = lib/compat
 	url = https://github.com/emacs-compat/compat.git
+[submodule "conda"]
+	path = lib/conda
+	url = https://github.com/necaris/conda.el
 [submodule "consult"]
 	path = lib/consult
 	url = https://github.com/minad/consult
@@ -469,6 +472,9 @@
 [submodule "pyim"]
 	path = lib/pyim
 	url = https://github.com/tumashu/pyim
+[submodule "pythonic"]
+	path = lib/pythonic
+	url = https://github.com/pythonic-emacs/pythonic
 [submodule "pyvenv"]
 	path = lib/pyvenv
 	url = https://github.com/jorgenschaefer/pyvenv
