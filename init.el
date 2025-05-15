@@ -106,8 +106,8 @@
 ;; Frameworks
 (require 'init-tabspace)
 
-;; ai -- 基本不用（界面广告太多，可考虑转到这来使用，随时查询）
-;; (require 'init-ai)
+;; ai
+(require 'init-aidermacs)
 
 (require 'init-global-keys)
 

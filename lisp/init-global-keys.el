@@ -67,7 +67,7 @@
 (define-key global-map (kbd "s-e") 'sis-switch)
 
 ;; 扩展完成：可使用tab，也可使用 s-/
-(global-set-key (kbd "s-/") 'hippie-expand)
+;; (global-set-key (kbd "s-/") 'hippie-expand)
 
 
 ;; r aka remember
@@ -97,6 +97,8 @@
 (global-set-key (kbd "C-c l") 'my/insert-chrome-current-tab-url)
 
 
+;; aidermacs
+(global-set-key (kbd "s-/") 'aidermacs-transient-menu)
 
 
 (provide 'init-global-keys)
