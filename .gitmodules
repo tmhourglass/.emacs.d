@@ -449,6 +449,12 @@
 [submodule "pangu-spacing"]
 	path = lib/pangu-spacing
 	url = https://github.com/coldnew/pangu-spacing
+[submodule "pass"]
+	path = lib/pass
+	url = https://github.com/NicolasPetton/pass
+[submodule "password-store"]
+	path = lib/password-store
+	url = git@github.com:emacsmirror/password-store.git
 [submodule "pdf-tools"]
 	path = lib/pdf-tools
 	url = https://github.com/vedang/pdf-tools
