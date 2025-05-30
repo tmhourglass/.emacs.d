@@ -1284,6 +1284,25 @@ If NEWNAME is a directory, move file to it."
       (and (fboundp 'mixed-pitch-mode) (mixed-pitch-mode -1))
       (text-scale-set 0))))
 
+;; 将a b c转换为 'a','b','c'的格式
+(defun tmhourglass/convert-to-quoted-symbols (str)
+  "Convert input string STR to quoted symbols."
+  (interactive
+   (if (use-region-p)
+       (list (buffer-substring-no-properties (region-beginning) (region-end)))
+     (list (read-string "Please input need convert string: "))))
+  (let* ((input str)
+         (words (split-string input))
+         (quoted-words (mapcar (lambda (word) (format "'%s'" word)) words))
+         (result (mapconcat 'identity quoted-words ", ")))
+    (if (use-region-p)
+        (progn
+          (goto-char (region-end))
+          (newline)
+          (insert result))
+      (kill-new result)
+      (message "Copied to clipboard."))))
+
 
 (provide 'init-funcs)
 
