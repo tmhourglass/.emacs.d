@@ -16,14 +16,29 @@
                         (insert-file-contents "~/.config/openrouter/key.txt")
                         (string-trim (buffer-string))))
 
-(setq gptel-model 'google/gemini-2.5-flash-preview-05-20
-      gptel-backend
-      (gptel-make-openai "OpenRouter"
-        :host "openrouter.ai"
-        :endpoint "/api/v1/chat/completions"
-        :stream t
-        :key open-router-key
-        :models '("google/gemini-2.5-flash-preview-05-20")))
+;; 配置不同的backend
+;; openrouter
+(gptel-make-openai "OpenRouter"
+  :host "openrouter.ai"
+  :endpoint "/api/v1/chat/completions"
+  :stream t
+  :key open-router-key
+  :models '(google/gemini-2.5-flash-preview-05-20))
+
+;; ollama
+(gptel-make-ollama "Ollama-local"
+  :host "localhost:11434"
+  :stream t
+  :models '(llama3.1:8b))
+
+;; 设置gptel的默认model和backend
+(setq gptel-model 'google/gemini-2.5-flash-preview-05-20)
+(setq gptel-backend (gptel-get-backend "OpenRouter"))
+
+;; 配置本地ollama模型，用于翻译 -- 比上面的还慢
+;; (setq gptel-model 'llama3.1:8b)
+;; (setq gptel-backend (gptel-get-backend "Ollama-local"))
+
 
 (defun start-gptel ()
   (interactive)
