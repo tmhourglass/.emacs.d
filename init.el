@@ -108,6 +108,10 @@
 
 ;; ai
 (require 'init-aidermacs)
+(require 'init-gptel)
+
+;; trans/gptel
+(require 'init-translate-region)
 
 (require 'init-global-keys)
 

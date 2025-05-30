@@ -100,6 +100,12 @@
 ;; aidermacs
 (global-set-key (kbd "s-/") 'aidermacs-transient-menu)
 
+;; gptel
+(define-key gptel-mode-map (kbd "RET") 'gptel-return-dwim)
+
+;; 中英互译
+(global-set-key (kbd "s-.") 'translate-region-zh-en)
+
 
 (provide 'init-global-keys)
 

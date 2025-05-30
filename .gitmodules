@@ -553,6 +553,9 @@
 [submodule "transient"]
 	path = lib/transient
 	url = https://github.com/magit/transient.git
+[submodule "translate-region"]
+	path = lib/translate-region
+	url = git@github.com:tmhourglass/translate-region.git
 [submodule "treepy"]
 	path = lib/treepy
 	url = https://github.com/volrath/treepy.el.git

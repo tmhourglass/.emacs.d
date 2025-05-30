@@ -227,8 +227,17 @@
     "z" 'dired-get-size
     ")" 'dired-omit-mode)
 
-  )
+  ;; 中英文互译（trans/gptel）
+  (+general-global-menu! "trans" "m"
+    "t" 'translate-region-zh-en
+    "b" 'translate-region-toggle-backend
+    "n" 'translate-region-naming
+    "i" 'translate-region-naming-interactive
+    "s" 'translate-region-to-snake-case
+    "p" 'translate-region-to-pascal-case
+    "c" 'translate-region-to-camel-case)
 
+  )
 
 
 (provide 'init-general-keys)
