@@ -329,6 +329,12 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
 ;;   :hook (after-init . global-so-long-mode))
 
 
+;; 像素平滑滚动 - 有用
+(use-package ultra-scroll
+  :config
+  (ultra-scroll-mode 1))
+
+
 
 (provide 'init-basic)
 

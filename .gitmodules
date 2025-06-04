@@ -568,6 +568,9 @@
 [submodule "ts"]
 	path = lib/ts
 	url = https://github.com/alphapapa/ts.el
+[submodule "ultra-scroll"]
+	path = lib/ultra-scroll
+	url = git@github.com:jdtsmith/ultra-scroll.git
 [submodule "uuidgen"]
 	path = lib/uuidgen
 	url = https://github.com/kanru/uuidgen-el
