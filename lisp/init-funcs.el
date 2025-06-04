@@ -1304,6 +1304,68 @@ If NEWNAME is a directory, move file to it."
       (message "Copied to clipboard."))))
 
 
+;; 生成符合以下条件的强密码，并拷贝到剪贴板
+(defun generate-strong-password (&optional length forbidden-words)
+  "Generate a secure password meeting these requirements:
+- Minimum length: 10
+- Excludes forbidden words (name pinyin, employee ID, etc.)
+- Contains ≥4 character types:
+  • Uppercase (A-Z)
+  • Lowercase (a-z)
+  • Digits (0-9)
+  • Special chars (!@#$%^&*~?_)
+Automatically copies to clipboard."
+  (interactive "nPassword length (default 12): \nsForbidden words (space-separated): ")
+  (let* ((length (or (and (> length 0) length) 12))
+         (forbidden-words (split-string (or forbidden-words "") " " t))
+         (upper-chars "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+         (lower-chars "abcdefghijklmnopqrstuvwxyz")
+         (digits "0123456789")
+         (special-chars "!@#$%^&*~?_")
+         (all-chars (concat upper-chars lower-chars digits special-chars))
+         (password "")
+         (attempts 0)
+         (max-attempts 100)
+         valid)
+
+    ;; Enforce minimum length
+    (when (< length 10)
+      (setq length 10))
+
+    ;; Generation attempts
+    (while (and (not valid) (< attempts max-attempts))
+      (setq password "")
+      (dotimes (i length)
+        (setq password (concat password (string (seq-elt all-chars (random (length all-chars)))))))
+
+      ;; Validation checks
+      (setq valid t)
+
+      ;; 1. Check forbidden words
+      (dolist (word forbidden-words)
+        (when (and (not (string-empty-p word))
+                   (string-match-p (regexp-quote word) password))
+          (setq valid nil)))
+
+      ;; 2. Check character categories
+      (let ((categories 0))
+        (when (string-match-p "[A-Z]" password) (cl-incf categories))
+        (when (string-match-p "[a-z]" password) (cl-incf categories))
+        (when (string-match-p "[0-9]" password) (cl-incf categories))
+        (when (string-match-p "[!@#$%^&*~?_]" password) (cl-incf categories))
+        (when (< categories 4)
+          (setq valid nil)))
+
+      (cl-incf attempts))
+
+    (if valid
+        (progn
+          (kill-new password)  ;; Copy to clipboard
+          (message "Password copied to clipboard: %s" password)
+          password)
+      (error "Failed to generate valid password after %d attempts" max-attempts))))
+
+
 (provide 'init-funcs)
 
 ;;; init-funcs.el ends here
