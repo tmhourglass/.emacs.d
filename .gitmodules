@@ -544,6 +544,9 @@
 [submodule "tabspaces"]
 	path = lib/tabspaces
 	url = https://github.com/mclear-tools/tabspaces
+[submodule "theme-switch"]
+	path = lib/theme-switch
+	url = git@github.com:tmhourglass/theme-switch.git
 [submodule "toc-org"]
 	path = lib/toc-org
 	url = https://github.com/snosov1/toc-org

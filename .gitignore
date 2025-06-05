@@ -2,7 +2,7 @@
 /url/cache
 /.emacs.desktop
 /auto-save-list
-/custom.el
+custom.el
 *.elc
 *~
 .*.lock

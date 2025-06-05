@@ -113,6 +113,9 @@
 ;; trans/gptel
 (require 'init-translate-region)
 
+;; theme switch
+(require 'init-theme-switch)
+
 (require 'init-global-keys)
 
 ;; 用得少且耗时长的，延迟加载，按键两部分拆分开

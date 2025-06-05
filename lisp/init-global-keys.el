@@ -106,6 +106,8 @@
 ;; 中英互译
 (global-set-key (kbd "s-.") 'translate-region-zh-en)
 
+;; 主题切换菜单
+(global-set-key (kbd "s-\\") 'theme-switch-menu)
 
 (provide 'init-global-keys)
 

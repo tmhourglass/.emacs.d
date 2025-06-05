@@ -227,7 +227,7 @@
     "z" 'dired-get-size
     ")" 'dired-omit-mode)
 
-  ;; 中英文互译（trans/gptel）
+  ;; translate-region中英文互译（trans/gptel）
   (+general-global-menu! "trans" "m"
     "t" 'translate-region-zh-en
     "b" 'translate-region-toggle-backend
@@ -237,6 +237,24 @@
     "p" 'translate-region-to-pascal-case
     "c" 'translate-region-to-camel-case)
 
+  ;; theme-switch 主题切换
+  (+general-global-menu! "theme-switch" "tt"
+    "r" 'theme-switch-random-favorites
+    "R" 'theme-switch-random-available
+    "p" 'theme-switch-previous
+    "l" 'theme-switch-load-theme
+    "e" 'theme-switch-toggle-eye-care
+    "d" 'theme-switch-day-mode
+    "n" 'theme-switch-night-mode
+    "a" 'theme-switch-toggle-auto-switch
+    "+" 'theme-switch-add-to-favorites
+    "-" 'theme-switch-remove-from-favorites
+    "f" 'theme-switch-list-favorites
+    "]" 'theme-switch-add-to-excluded
+    "[" 'theme-switch-remove-from-excluded
+    "x" 'theme-switch-list-excluded
+    "v" 'theme-switch-preview
+    "m" 'theme-switch-menu)
   )
 
 
