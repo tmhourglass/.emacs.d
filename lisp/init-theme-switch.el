@@ -11,18 +11,44 @@
 (require 'theme-switch)
 
 ;;; 主题设置
-;; 设置喜欢的主题列表
-(setq theme-switch-favorite-themes '(solarized-dark solarized-light leuven modus-vivendi modus-operandi))
+;; 设置喜欢的主题列表 （可自定义-custom）
+(setq theme-switch-favorite-themes '(sanityinc-solarized-dark
+                                     sanityinc-solarized-light
+                                     doom-oksolar-dark
+                                     doom-oksolar-light
+                                     doom-monokai-pro
+                                     doom-tomorrow-day
+                                     doom-tomorrow-night
+                                     sanityinc-tomorrow-day
+                                     sanityinc-tomorrow-night
+                                     sanityinc-tomorrow-eighties
+                                     ))
 
-;; 设置不想使用的主题
+;; 设置不想使用的主题 （可自定义-custom）
 (setq theme-switch-excluded-themes '(adwaita))
 
 ;;; 护眼模式设置
-;; 设置日间模式主题列表（亮色主题）
-(setq theme-switch-day-themes '(leuven solarized-light modus-operandi))
+;; 设置日间模式主题列表（亮色主题） - 需在此处修改
+(setq theme-switch-day-themes '(tango
+                                leuven
+                                sanityinc-solarized-light
+                                sanityinc-tomorrow-day
+                                modus-operandi
+                                doom-oksolar-light
+                                ))
 
-;; 设置夜间模式主题列表（暗色主题）
-(setq theme-switch-night-themes '(zenburn solarized-dark modus-vivendi))
+;; 设置夜间模式主题列表（暗色主题） - 需在此处修改
+(setq theme-switch-night-themes '(tango-dark
+                                  zenburn
+                                  sanityinc-solarized-dark
+                                  sanityinc-tomorrow-bright
+                                  sanityinc-tomorrow-eighties
+                                  modus-vivendi
+                                  doom-monokai-pro
+                                  doom-one
+                                  doom-tomorrow-night
+                                  doom-oksolar-dark
+                                  ))
 
 ;; 设置日间/夜间模式的时间
 (setq theme-switch-day-start "06:30")
