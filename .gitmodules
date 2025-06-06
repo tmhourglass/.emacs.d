@@ -8,6 +8,7 @@
 [submodule "aidermacs"]
 	path = lib/aidermacs
 	url = git@github.com:MatthewZMD/aidermacs.git
+	no-byte-compile = vc-git.el
 [submodule "alert"]
 	path = lib/alert
 	url = https://github.com/jwiegley/alert

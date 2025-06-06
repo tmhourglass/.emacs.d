@@ -107,11 +107,7 @@
 (require 'init-tabspace)
 
 ;; ai
-(require 'init-aidermacs)
 (require 'init-gptel)
-
-;; trans/gptel
-(require 'init-translate-region)
 
 ;; theme switch
 (require 'init-theme-switch)
@@ -120,12 +116,18 @@
 
 ;; 用得少且耗时长的，延迟加载，按键两部分拆分开
 (run-with-idle-timer
- 1 nil
+ 2 nil
  #'(lambda ()
      (require 'init-tools)
      (require 'init-snippets)
      ;; 翻译
      (require 'init-dict)
+     ;; trans/gptel
+     (require 'init-translate-region)
+
+     ;; ai (aidermacs中的vc-git耗时）
+     (require 'init-aidermacs)
+
      ;; Programming
      (require 'init-lsp)
      (require 'init-lisp)
