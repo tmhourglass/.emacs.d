@@ -24,7 +24,8 @@ def update_submodules(repo_path):
     print("Updating submodules...")
     # Initialize and update submodules to the commit specified in the main repo
     # Get the list of submodules
-    submodules = run_command("git config --file .gitmodules --get-regexp path", cwd=repo_path).splitlines()
+    # path要改为使用 '\.path$' 正则来精确匹配，否则遇到其他path会导致错误
+    submodules = run_command("git config --file .gitmodules --get-regexp '\.path$'", cwd=repo_path).splitlines()
     for submodule in submodules:
         path = submodule.split()[1]
         submodule_path = os.path.join(repo_path, path)
@@ -40,7 +41,8 @@ def update_submodules(repo_path):
             continue
 
         run_command("git checkout -- .", cwd=submodule_path)
-        run_command("git submodule update", cwd=submodule_path)
+        # 使用submodule update有问题
+        run_command("git pull", cwd=submodule_path)
 
 
 def main():
@@ -53,7 +55,10 @@ def main():
         print(f"Error: The path '{repo_path}' is not a valid directory.")
         return
 
-    update_main_repo(repo_path)
+    # update_main_repo(repo_path)
+    # 1. 在.emacs.d中执行 git submodule update --remote
+    #    git submodule update --init --recursive
+    # 2. 进入submodule中执行checkout & pull
     update_submodules(repo_path)
 
 
