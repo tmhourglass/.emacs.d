@@ -96,19 +96,6 @@
 ;; 插入当前chrome的tab url
 (global-set-key (kbd "C-c l") 'my/insert-chrome-current-tab-url)
 
-
-;; aidermacs
-(global-set-key (kbd "s-/") 'aidermacs-transient-menu)
-
-;; gptel
-(define-key gptel-mode-map (kbd "RET") 'gptel-return-dwim)
-
-;; 中英互译
-(global-set-key (kbd "s-.") 'translate-region-zh-en)
-
-;; 主题切换菜单
-(global-set-key (kbd "s-\\") 'theme-switch-menu)
-
 (provide 'init-global-keys)
 
 ;;; init-global-keys.el ends here

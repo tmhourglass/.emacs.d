@@ -4,66 +4,79 @@
 
 ;;; Commentary:
 
-;; Theme Switch
+;; Theme Switch - use-package版本
 
 ;;; Code:
 
-(require 'theme-switch)
+(use-package theme-switch
+  :defer t  ; 延迟加载以提升启动速度
+  :commands (theme-switch-mode theme-switch-auto theme-switch-menu)
+  :init
+  ;; 主题设置 - 在包加载前设置变量
+  ;; 设置喜欢的主题列表（可自定义）
+  (setq theme-switch-favorite-themes '(sanityinc-solarized-dark
+                                       sanityinc-solarized-light
+                                       doom-oksolar-dark
+                                       doom-oksolar-light
+                                       doom-monokai-pro
+                                       doom-tomorrow-day
+                                       doom-tomorrow-night
+                                       sanityinc-tomorrow-day
+                                       sanityinc-tomorrow-night
+                                       sanityinc-tomorrow-eighties))
 
-;;; 主题设置
-;; 设置喜欢的主题列表 （可自定义-custom）
-(setq theme-switch-favorite-themes '(sanityinc-solarized-dark
-                                     sanityinc-solarized-light
-                                     doom-oksolar-dark
-                                     doom-oksolar-light
-                                     doom-monokai-pro
-                                     doom-tomorrow-day
-                                     doom-tomorrow-night
-                                     sanityinc-tomorrow-day
-                                     sanityinc-tomorrow-night
-                                     sanityinc-tomorrow-eighties
-                                     ))
+  ;; 设置不想使用的主题（可自定义）
+  (setq theme-switch-excluded-themes '(adwaita))
 
-;; 设置不想使用的主题 （可自定义-custom）
-(setq theme-switch-excluded-themes '(adwaita))
+  ;; 护眼模式设置
+  ;; 设置日间模式主题列表（亮色主题）
+  (setq theme-switch-day-themes '(tango
+                                  leuven
+                                  sanityinc-solarized-light
+                                  sanityinc-tomorrow-day
+                                  modus-operandi
+                                  doom-oksolar-light))
 
-;;; 护眼模式设置
-;; 设置日间模式主题列表（亮色主题） - 需在此处修改
-(setq theme-switch-day-themes '(tango
-                                leuven
-                                sanityinc-solarized-light
-                                sanityinc-tomorrow-day
-                                modus-operandi
-                                doom-oksolar-light
-                                ))
+  ;; 设置夜间模式主题列表（暗色主题）
+  (setq theme-switch-night-themes '(tango-dark
+                                    zenburn
+                                    sanityinc-solarized-dark
+                                    sanityinc-tomorrow-bright
+                                    sanityinc-tomorrow-eighties
+                                    modus-vivendi
+                                    doom-monokai-pro
+                                    doom-one
+                                    doom-tomorrow-night
+                                    doom-oksolar-dark))
 
-;; 设置夜间模式主题列表（暗色主题） - 需在此处修改
-(setq theme-switch-night-themes '(tango-dark
-                                  zenburn
-                                  sanityinc-solarized-dark
-                                  sanityinc-tomorrow-bright
-                                  sanityinc-tomorrow-eighties
-                                  modus-vivendi
-                                  doom-monokai-pro
-                                  doom-one
-                                  doom-tomorrow-night
-                                  doom-oksolar-dark
-                                  ))
+  ;; 设置日间/夜间模式的时间
+  (setq theme-switch-day-start "06:30"
+        theme-switch-night-start "18:30")
 
-;; 设置日间/夜间模式的时间
-(setq theme-switch-day-start "06:30")
-(setq theme-switch-night-start "18:30")
+  ;; 启用自动切换
+  (setq theme-switch-auto-switch-enabled t
+        theme-switch-auto-switch-interval 1800) ; 30分钟检查一次
 
-;; 启用自动切换
-(setq theme-switch-auto-switch-enabled t)
-(setq theme-switch-auto-switch-interval 1800) ;; 30分钟检查一次
+  :config
+  ;; 启用主题切换模式
+  (theme-switch-mode 1)
 
+  ;; 启动时根据当前时间自动选择模式
+  (theme-switch-auto)
 
-;;; 启用主题切换模式
-(theme-switch-mode 1)
+  ;; 可选：添加一些便捷函数
+  (defun my/toggle-theme-mode ()
+    "快速切换日间/夜间模式."
+    (interactive)
+    (if (member (car custom-enabled-themes) theme-switch-day-themes)
+        (theme-switch-night)
+      (theme-switch-day)))
 
-;;; 启动时根据当前时间自动选择模式（可选）
-(theme-switch-auto)
+  ;; 可选：绑定快捷键（如果需要的话）
+  ;; (global-set-key (kbd "C-c t t") #'my/toggle-theme-mode)
+  ;; 主题切换菜单
+  :bind ("s-\\" . theme-switch-menu)
+  )
 
 (provide 'init-theme-switch)
 

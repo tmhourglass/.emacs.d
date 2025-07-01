@@ -58,6 +58,7 @@
   (setq use-package-enable-imenu-support t)
   (setq use-package-expand-minimally t)
   (setq use-package-compute-statistics t)
+  (setq use-package-always-defer t)
   (require  'use-package))
 
 ;; 优化启动时间
@@ -90,9 +91,10 @@
 ;; uis
 (require 'init-ui)
 (require 'init-font)
-(require 'init-dashboard)
 (require 'init-window)
+(require 'init-dashboard)
 (require 'init-dired)
+(require 'init-theme-switch)
 ;; (require 'init-dirvish)
 
 ;; Tools
@@ -102,38 +104,29 @@
 (require 'init-syntaxcheck)
 (require 'init-write)
 (require 'init-read)
+(require 'init-dict)
 
 ;; Frameworks
 (require 'init-tabspace)
 
-;; ai
-(require 'init-gptel)
-
-;; theme switch
-(require 'init-theme-switch)
-
 (require 'init-global-keys)
+(require 'init-tools)
+(require 'init-snippets)
 
-;; 用得少且耗时长的，延迟加载，按键两部分拆分开
-(run-with-idle-timer
- 2 nil
- #'(lambda ()
-     (require 'init-tools)
-     (require 'init-snippets)
-     ;; 翻译
-     (require 'init-dict)
-     ;; trans/gptel
-     (require 'init-translate-region)
+;; ai (aidermacs中的vc-git耗时）
+(require 'init-aidermacs)
+(require 'init-gptel)
+;; trans/gptel
+(require 'init-translate-region)
 
-     ;; ai (aidermacs中的vc-git耗时）
-     (require 'init-aidermacs)
+;; Programming
+(require 'init-lsp)
+(require 'init-lisp)
+(require 'init-python)
+(require 'init-programming)
+(require 'init-general-keys)
 
-     ;; Programming
-     (require 'init-lsp)
-     (require 'init-lisp)
-     (require 'init-python)
-     (require 'init-programming)
-     (require 'init-general-keys)))
-
+;; benchmark
+(require 'init-benchmark-sort)
 
 ;;; init.el ends here
