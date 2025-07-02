@@ -27,9 +27,18 @@
 ;; 另一种翻译，选择使用
 ;; 分别提供4种字典，速度上有点慢，也可使用
 (use-package fanyi
+  :commands (fanyi-dwim fanyi-dwim2 fanyi-from-history)
   :bind (("C-c d f" . fanyi-dwim)
          ("C-c d d" . fanyi-dwim2)
          ("C-c d h" . fanyi-from-history))
+  :config
+  ;; 快捷键设定
+  (+general-global-menu! "dict" "d"
+    "f" 'fanyi-dwim                     ;有提示，默认当前单词
+    "d" 'fanyi-dwim2                    ;不提示，默认当前单词
+    "h" 'fanyi-from-history             ;显示历史
+    )
+
   :custom
   (fanyi-providers '(;; 海词
                      fanyi-haici-provider
@@ -114,12 +123,28 @@
     (defun gt-do-text-utility ()
       "Handle the texts with the utilities."
       (interactive)
-      (gt--do-translate 'Text-Utility))))
+      (gt--do-translate 'Text-Utility)))
+
+  ;; 快捷键设定
+  (+general-global-menu! "dict" "d"
+    "g" 'gt-do-translate                ;无提示，使用posframe显示
+    "G" 'gt-do-translate-prompt         ;提示，多字典显示
+    "u" 'gt-do-text-utility             ;文本编码
+    "p" 'gt-do-speak
+    "s" 'gt-do-setup                    ;显示当前翻译器配置
+    )
+  )
 
 
 ;; OSX dictionary：使用macOS中的字典接口来查询
 (when sys/macp
   (use-package osx-dictionary
+    :config
+    ;; 快捷键设定
+    (+general-global-menu! "dict" "d"
+      "i" 'osx-dictionary-search-input
+      "x" 'osx-dictionary-search-pointer)
+
     :bind (("C-c d i" . osx-dictionary-search-input)
            ("C-c d x" . osx-dictionary-search-pointer))))
 

@@ -11,7 +11,7 @@
 ;;; Code:
 
 (use-package evil
-  ;; :hook (after-init . evil-mode)
+  :hook (after-init . evil-mode)
   :init
   (setq evil-want-keybinding nil)
   (setq evil-want-C-u-scroll t)

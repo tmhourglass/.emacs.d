@@ -9,7 +9,8 @@
 ;;; Code:
 
 (use-package translate-region
-  :defer t  ; 延迟加载以提升启动速度
+  :defer t                              ; 延迟加载以提升启动速度
+  :after gptel
   :commands (translate-region translate-region-zh-en translate-region-naming
                               translate-region-to-snake-case translate-region-to-pascal-case
                               translate-region-to-camel-case)
@@ -103,6 +104,16 @@
     (message "翻译后端: %s | 默认命名风格: %s"
              translate-region-backend
              translate-region-naming-style))
+  ;; 快捷键设定
+  (+general-global-menu! "trans" "m"
+    "t" 'translate-region-zh-en
+    "b" 'translate-region-toggle-backend
+    "n" 'translate-region-naming
+    "i" 'translate-region-naming-interactive
+    "s" 'translate-region-to-snake-case
+    "p" 'translate-region-to-pascal-case
+    "c" 'translate-region-to-camel-case)
+
 
   ;; ==============================
   ;; 按键绑定

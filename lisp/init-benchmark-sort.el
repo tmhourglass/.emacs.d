@@ -235,20 +235,18 @@
     ;; 直接使用evil-define-key设置快捷键，会覆盖原有绑定
     (when (featurep 'evil)
       (evil-define-key 'normal benchmark-init/tree-mode-map
-        "s" 'benchmark-sort-by-time
-        "n" 'benchmark-sort-by-name
-        "f" 'benchmark-sort-filter-by-time
-        "S" 'benchmark-sort-show-summary
-        "q" 'quit-window)
+        ",s" 'benchmark-sort-by-time
+        ",n" 'benchmark-sort-by-name
+        ",f" 'benchmark-sort-filter-by-time
+        ",S" 'benchmark-sort-show-summary)
 
       ;; 同时设置到普通的mode-map（非evil用户）
-      (define-key benchmark-init/tree-mode-map (kbd "s") 'benchmark-sort-by-time)
-      (define-key benchmark-init/tree-mode-map (kbd "n") 'benchmark-sort-by-name)
-      (define-key benchmark-init/tree-mode-map (kbd "f") 'benchmark-sort-filter-by-time)
-      (define-key benchmark-init/tree-mode-map (kbd "S") 'benchmark-sort-show-summary)
-      (define-key benchmark-init/tree-mode-map (kbd "q") 'quit-window)
+      (define-key benchmark-init/tree-mode-map (kbd ",s") 'benchmark-sort-by-time)
+      (define-key benchmark-init/tree-mode-map (kbd ",n") 'benchmark-sort-by-name)
+      (define-key benchmark-init/tree-mode-map (kbd ",f") 'benchmark-sort-filter-by-time)
+      (define-key benchmark-init/tree-mode-map (kbd ",S") 'benchmark-sort-show-summary)
 
-      (message "✅ Benchmark排序快捷键已设置: s(时间排序) n(名称排序) f(过滤) S(摘要)"))))
+      (message "✅ Benchmark排序快捷键已设置: ,s(时间排序) ,n(名称排序) ,f(过滤) ,S(摘要)"))))
 
 (provide 'init-benchmark-sort)
 

@@ -468,7 +468,7 @@ open and unsaved."
           (browse-url (concat "http://localhost:" hugo-service-port))))))
 
 ;;;###autoload
-(defun zilongshanren/highlight-dwim ()
+(defun my/highlight-dwim ()
   (interactive)
   (if (use-region-p)
       (progn
@@ -485,9 +485,8 @@ open and unsaved."
                          (buffer-substring (region-beginning) (region-end))))))
 
 ;;;###autoload
-(defun zilongshanren/clearn-highlight ()
+(defun my/clearn-highlight ()
   (interactive)
-  (clear-highlight-frame)
   (symbol-overlay-remove-all))
 
 ;; 扩展选区
@@ -1126,28 +1125,6 @@ Puts point in the middle line as well as indent it by correct amount."
 	     (format "./%s" (file-name-sans-extension (file-name-nondirectory buffer-file-name)))))
   (async-shell-command run-command))
 
-
-(defun my/eudic (&optional read)
-  "Translate with eudic.
-eudic program must set auto translate words in clipboard."
-  (interactive "P")
-  (let* ((default-word (if (member major-mode '(doc-view-mode pdf-view-mode))
-                           nil
-                         (if mark-active
-                             (buffer-substring-no-properties (region-beginning) (region-end))
-                           (current-word))))
-         (word (if read nil default-word))
-         (old (car kill-ring)))
-    (when (= 0 (length word))
-      (setq word (read-string (concat "Translate Words: ") default-word)))
-    ;; Put into kill-ring for eudic translate words in clipboard.
-    (kill-new word)
-    (shell-command "open /Applications/Eudic.app")
-    ;; Recover kill-ring later.
-    (run-with-timer 1 nil (lambda (word old)
-                            (if (equal word (car kill-ring))
-                                (kill-new old)))
-                    word old)))
 
 (defun my/org-agenda-calculate-efforts (limit)
   "Sum the efforts of scheduled entries up to LIMIT in the

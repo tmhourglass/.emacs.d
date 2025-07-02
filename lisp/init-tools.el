@@ -8,22 +8,7 @@
 
 ;;; Code:
 
-;; 全局高亮，可跨越所有文件和buffer，当前绑定到一个自定义函数
-;; 快捷键 `SPC h h`
-;; quelpa 去掉，考虑重新管理这些包  -- 暂时注释掉
-;; (use-package highlight-global
-;;   :commands (highlight-frame-toggle)
-;;   :quelpa (highlight-global :fetcher github :repo "glen-dai/highlight-global")
-;;   :config
-;;   (progn
-;;     (setq-default highlight-faces
-;;                   '(('hi-red-b . 0)
-;;                     ('hi-aquamarine . 0)
-;;                     ('hi-pink . 0)
-;;                     ('hi-blue-b . 0)))))
-
-
-;; 待明确
+;; 用于高亮
 (use-package symbol-overlay
   :config
   (define-key symbol-overlay-map (kbd "h") 'nil))
@@ -41,15 +26,6 @@
 
 (use-package discover-my-major)
 
-
-;; 去掉有道词典，解决启动警告：Edebug: names-edebug-anon0 一并从elpa下删除
-;; 暂时用得少，后面再考虑加上
-;; (use-package youdao-dictionary
-;;   :commands (youdao-dictionary-search-at-point+)
-;;   :init
-;;   (global-set-key (kbd "C-c y") 'youdao-dictionary-search-at-point+))
-
-
 ;; 多点编辑
 (use-package iedit
   :init
@@ -57,7 +33,6 @@
   :config
   (define-key iedit-mode-keymap (kbd "M-h") 'iedit-restrict-function)
   (define-key iedit-mode-keymap (kbd "M-i") 'iedit-restrict-current-line))
-
 
 ;; 配合多点编辑， mc/edit-lines  mc/edit-ends-of-lines 开头和结尾添加光标，以便编辑
 ;; 可替换vim模式下的C-v列编辑模式
@@ -94,7 +69,7 @@
        '("H" (lambda ()
                (interactive)
                (call-interactively
-                'zilongshanren/highlight-dwim)))
+                'my/highlight-dwim)))
        new-bindings)
       (cl-pushnew
        '("/" (lambda ()
@@ -123,28 +98,28 @@
       (setq ad-return-value (cons new-msg new-bindings)))))
 
 ;; 定义服务，以便快速启动  hugo
-(use-package prodigy
-  :commands (prodigy)
-  :config
-  (progn
-    ;; define service
-    (prodigy-define-service
-      :name "Hugo Server"
-      :command "hugo"
-      :args '("server" "-D" "--navigateToChanged" "-t" "even")
-      :cwd blog-admin-dir
-      :tags '(hugo server)
-      :kill-signal 'sigkill
-      :kill-process-buffer-on-stop t)
+;; (use-package prodigy
+;;   :commands (prodigy)
+;;   :config
+;;   (progn
+;;     ;; define service
+;;     (prodigy-define-service
+;;       :name "Hugo Server"
+;;       :command "hugo"
+;;       :args '("server" "-D" "--navigateToChanged" "-t" "even")
+;;       :cwd blog-admin-dir
+;;       :tags '(hugo server)
+;;       :kill-signal 'sigkill
+;;       :kill-process-buffer-on-stop t)
 
-    (prodigy-define-service
-      :name "hugo Deploy"
-      :command "bash"
-      :args '("./deploy.sh")
-      :cwd blog-admin-dir
-      :tags '(hugo deploy)
-      :kill-signal 'sigkill
-      :kill-process-buffer-on-stop t)))
+;;     (prodigy-define-service
+;;       :name "hugo Deploy"
+;;       :command "bash"
+;;       :args '("./deploy.sh")
+;;       :cwd blog-admin-dir
+;;       :tags '(hugo deploy)
+;;       :kill-signal 'sigkill
+;;       :kill-process-buffer-on-stop t)))
 
 
 
@@ -256,19 +231,20 @@
 ;; cost time
 ;; tramp 远程编辑
 (use-package tramp
-  :defer t
+  :defer 5
   :custom
   ;; Always use file cache when using tramp
   (remote-file-name-inhibit-cache nil)
   (tramp-default-method "ssh"))
 
 (use-package tramp-sh
+  :defer 5
   :config (cl-pushnew 'tramp-own-remote-path tramp-remote-path))
 
 
 ;; 浏览unix命令手册页 -- 用于查看linux命令帮助
 (use-package man
-  :defer t
+  :defer 5
   :config (setq Man-width 80))
 
 

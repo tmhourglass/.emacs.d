@@ -9,7 +9,7 @@
 ;;; Code:
 
 (use-package theme-switch
-  :defer t  ; 延迟加载以提升启动速度
+  :defer t                              ; 延迟加载以提升启动速度
   :commands (theme-switch-mode theme-switch-auto theme-switch-menu)
   :init
   ;; 主题设置 - 在包加载前设置变量
@@ -72,8 +72,26 @@
         (theme-switch-night)
       (theme-switch-day)))
 
-  ;; 可选：绑定快捷键（如果需要的话）
-  ;; (global-set-key (kbd "C-c t t") #'my/toggle-theme-mode)
+  ;; 快捷键设定
+  (+general-global-menu! "theme-switch" "tt"
+    "r" 'theme-switch-random-favorites
+    "R" 'theme-switch-random-available
+    "p" 'theme-switch-previous
+    "l" 'theme-switch-load-theme
+    "e" 'theme-switch-toggle-eye-care
+    "d" 'theme-switch-day-mode
+    "n" 'theme-switch-night-mode
+    "a" 'theme-switch-toggle-auto-switch
+    "+" 'theme-switch-add-to-favorites
+    "-" 'theme-switch-remove-from-favorites
+    "f" 'theme-switch-list-favorites
+    "]" 'theme-switch-add-to-excluded
+    "[" 'theme-switch-remove-from-excluded
+    "x" 'theme-switch-list-excluded
+    "v" 'theme-switch-preview
+    "m" 'theme-switch-menu)
+
+
   ;; 主题切换菜单
   :bind ("s-\\" . theme-switch-menu)
   )

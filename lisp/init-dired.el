@@ -37,11 +37,17 @@
         ;; Suppress the warning: `ls does not support --dired'.
         (setq dired-use-ls-dired nil)
         (setq dired-listing-switches "-alh"))))
-  ;; (when (executable-find "/opt/homebrew/opt/coreutils/libexec/gnubin/ls")
-  ;;   (if (string-match-p "x86_64" system-configuration)
-  ;;       (setq insert-directory-program "/usr/local/opt/coreutils/libexec/gnubin/ls")
-  ;;     (setq insert-directory-program "/opt/homebrew/opt/coreutils/libexec/gnubin/ls"))
-  ;;   (dired-quick-sort-setup))
+
+  ;; 快捷键设定
+  (evil-define-key 'normal dired-mode-map
+    (kbd "<RET>") 'dired-find-alternate-file
+    (kbd "C-k") 'dired-up-directory
+    "`" 'dired-open-term
+    "o" 'dired-find-file-other-window
+    "s" 'hydra-dired-quick-sort/body
+    "z" 'dired-get-size
+    ")" 'dired-omit-mode)
+
   )
 
 ;;额外的字体锁定规则，使dired更丰富多彩

@@ -32,6 +32,7 @@
 
 (use-package doom-modeline
   :hook (after-init . doom-modeline-mode)
+  :defer 2
   :init
   (setq doom-modeline-minor-modes t)
   :custom-face

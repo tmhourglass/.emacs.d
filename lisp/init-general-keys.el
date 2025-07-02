@@ -40,37 +40,14 @@
     "hk" 'describe-key
     "qq" 'save-buffers-kill-terminal
     "qR" 'restart-emacs
-    "hh" 'zilongshanren/highlight-dwim
-    "hc" 'zilongshanren/clearn-highlight
+    "hh" 'my/highlight-dwim
+    "hc" 'my/clearn-highlight
     "ry" 'consult-yank-pop              ;M-y
     "R" 'my/run-current-file            ;在shell中运行当前文件
     ;; 错误处跳转，先使用SPC t s激活flycheck-mode才能使用
     "en" 'my-goto-next-error
     "ep" 'my-goto-previous-error
     "el" 'my-list-errors)
-
-  (+general-global-menu! "git/goto" "g"
-    ;; =========git============
-    "s" 'magit-status
-    "l" 'git-link
-    "h" 'git-link-homepage
-    "c" 'git-link-commit
-    ;; =========goto============
-    "d" 'vc-diff
-    "g" 'xref-find-definitions
-    "r" 'xref-find-references
-    "m" 'consult-mark
-    "M" 'consult-global-mark)
-
-  (+general-global-menu! "open" "o"
-    "o" 'zilongshanren/hotspots
-    "r" 'org-roam-node-find
-    "c" 'org-capture                    ; 另一个按键C-c r
-    "l" 'org-store-link
-    "t" 'ansi-term
-    ;; "y" 'my/eudic                       ; 不太好用，注释掉
-    )
-
 
   (+general-global-menu! "file" "f"
     "f" 'find-file
@@ -123,14 +100,6 @@
     "l" 'bookmark-bmenu-list
     "s" 'bookmark-save)
 
-  (+general-global-menu! "code" "c"
-    "c" 'compile
-    "C" 'recompile
-    "k" 'kill-compilation
-    "w" 'delete-trailing-whitespace
-    "x" 'quickrun                       ;直接运行当前文件，需配置执行命令
-    )
-
   (+general-global-menu! "search" "s"
     "i" 'my/imenu
     "s" 'consult-line
@@ -172,91 +141,65 @@
     "J" 'buf-move-down
     "K" 'buf-move-up)
 
-  ;; 触发部分特殊功能或模式
-  (+general-global-menu! "toggle" "t"
-    "s" 'flycheck-mode
-    "S" 'flyspell-prog-mode
-    "e" 'toggle-corfu-english-helper    ;英文编写助手
-    "r" 'read-only-mode                 ;只读模式
-    "n" 'my-toggle-line-numbber         ;触发行号
-    ;; "w" 'writeroom-mode
-    "w" 'prose-mode                     ;启动专注写作模式
-    "k" 'toggle-keycast                 ;触发keycast
-    ;; command-log-buffer有三个命令 open/close/toggle   -- M-x tclb
-    ;; "k" 'clm/toggle-command-log-buffer ;手动触发命令日志窗口，垂直分隔，若带前缀，则清空 （看函数定义）
-    "c" 'global-corfu-mode              ;全局corfu模式
-    "m" 'consult-minor-mode-menu)
+  ;; 延迟加载
+  (run-with-timer 0.5 nil
+                  (lambda ()
 
-  (+general-global-menu! "project" "p"
-    "f" 'project-find-file
-    "r" 'consult-recent-file
-    "s" 'project-find-regexp
-    "d" 'project-dired
-    "b" 'consult-project-buffer
-    "e" 'project-eshell
-    "m" 'my/project-run-makefile-target
-    "c" 'project-compile
-    "t" 'my/project-citre
-    "p" 'project-switch-project
-    "i" 'my/project-info
-    "a" 'project-remember-projects-under
-    "x" 'project-forget-project)
+                    ;; =========goto============
+                    (+general-global-menu! "git/goto" "g"
+                      "d" 'vc-diff
+                      "g" 'xref-find-definitions
+                      "r" 'xref-find-references
+                      "m" 'consult-mark
+                      "M" 'consult-global-mark)
 
-  ;; 字典相关，将C-c d映射为SPC d，其他保持不变
-  (+general-global-menu! "dict" "d"
-    ;; go-translate
-    "g" 'gt-do-translate                ;无提示，使用posframe显示
-    "G" 'gt-do-translate-prompt         ;提示，多字典显示
-    "u" 'gt-do-text-utility             ;文本编码
-    "p" 'gt-do-speek
-    "s" 'gt-do-setup                    ;显示当前的翻译器配置
-    ;; fanyi
-    "f" 'fanyi-dwim                     ;有提示，默认当前单词，可输入其他单词
-    "d" 'fanyi-dwim2                    ;不提示，默认为当前单词
-    "h" 'fanyi-from-history             ;显示历史
-    ;; osx-dictionary
-    "i" 'osx-dictionary-search-input
-    "x" 'osx-dictionary-search-pointer)
+                    (+general-global-menu! "open" "o"
+                      "o" 'zilongshanren/hotspots
+                      "r" 'org-roam-node-find
+                      "c" 'org-capture                    ; 另一个按键C-c r
+                      "l" 'org-store-link
+                      "t" 'ansi-term)
 
+                    ;; 触发部分特殊功能或模式
+                    (+general-global-menu! "toggle" "t"
+                      "s" 'flycheck-mode
+                      "S" 'flyspell-prog-mode
+                      "e" 'toggle-corfu-english-helper    ;英文编写助手
+                      "r" 'read-only-mode                 ;只读模式
+                      "n" 'my-toggle-line-numbber         ;触发行号
+                      ;; "w" 'writeroom-mode
+                      "w" 'prose-mode                     ;启动专注写作模式
+                      "k" 'toggle-keycast                 ;触发keycast
+                      ;; command-log-buffer有三个命令 open/close/toggle   -- M-x tclb
+                      ;; "k" 'clm/toggle-command-log-buffer ;手动触发命令日志窗口，垂直分隔，若带前缀，则清空 （看函数定义）
+                      "c" 'global-corfu-mode              ;全局corfu模式
+                      "m" 'consult-minor-mode-menu)
 
-  (evil-define-key 'normal dired-mode-map
-    (kbd "<RET>") 'dired-find-alternate-file
-    (kbd "C-k") 'dired-up-directory
-    "`" 'dired-open-term
-    "o" 'dired-find-file-other-window
-    "s" 'hydra-dired-quick-sort/body
-    "z" 'dired-get-size
-    ")" 'dired-omit-mode)
+                    ;; 项目相关
+                    (+general-global-menu! "project" "p"
+                      "f" 'project-find-file
+                      "r" 'consult-recent-file
+                      "s" 'project-find-regexp
+                      "d" 'project-dired
+                      "b" 'consult-project-buffer
+                      "e" 'project-eshell
+                      "m" 'my/project-run-makefile-target
+                      "c" 'project-compile
+                      "t" 'my/project-citre
+                      "p" 'project-switch-project
+                      "i" 'my/project-info
+                      "a" 'project-remember-projects-under
+                      "x" 'project-forget-project)
 
-  ;; translate-region中英文互译（trans/gptel）
-  (+general-global-menu! "trans" "m"
-    "t" 'translate-region-zh-en
-    "b" 'translate-region-toggle-backend
-    "n" 'translate-region-naming
-    "i" 'translate-region-naming-interactive
-    "s" 'translate-region-to-snake-case
-    "p" 'translate-region-to-pascal-case
-    "c" 'translate-region-to-camel-case)
+                    ;; 代码相关
+                    (+general-global-menu! "code" "c"
+                      "c" 'compile
+                      "C" 'recompile
+                      "k" 'kill-compilation
+                      "w" 'delete-trailing-whitespace
+                      "x" 'quickrun) ;直接运行当前文件，需配置执行命令
 
-  ;; theme-switch 主题切换
-  (+general-global-menu! "theme-switch" "tt"
-    "r" 'theme-switch-random-favorites
-    "R" 'theme-switch-random-available
-    "p" 'theme-switch-previous
-    "l" 'theme-switch-load-theme
-    "e" 'theme-switch-toggle-eye-care
-    "d" 'theme-switch-day-mode
-    "n" 'theme-switch-night-mode
-    "a" 'theme-switch-toggle-auto-switch
-    "+" 'theme-switch-add-to-favorites
-    "-" 'theme-switch-remove-from-favorites
-    "f" 'theme-switch-list-favorites
-    "]" 'theme-switch-add-to-excluded
-    "[" 'theme-switch-remove-from-excluded
-    "x" 'theme-switch-list-excluded
-    "v" 'theme-switch-preview
-    "m" 'theme-switch-menu)
-  )
+                    )))
 
 
 (provide 'init-general-keys)

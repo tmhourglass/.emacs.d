@@ -24,11 +24,22 @@
   (with-eval-after-load "magit-submodule"
     (remove-hook 'magit-module-sections-hook 'magit-insert-modules-unpulled-from-pushremote)
     (remove-hook 'magit-module-sections-hook 'magit-insert-modules-unpushed-to-upstream)
-    (remove-hook 'magit-module-sections-hook 'magit-insert-modules-unpushed-to-pushremote)))
+    (remove-hook 'magit-module-sections-hook 'magit-insert-modules-unpushed-to-pushremote))
+  ;; 设置快捷键
+  (+general-global-menu! "git" "g"
+    "s" 'magit-status)
+  :bind ("C-c s" . magit-status)
+  )
 
 
 ;; 获取当前buffer的github地址
 (use-package git-link
+  :config
+  (+general-global-menu! "git" "g"
+    "l" 'git-link
+    "h" 'git-link-homepage
+    "c" 'git-link-commit)
+
   :bind (("C-c g l" . git-link)
          ("C-c g h" . git-link-homepage)
          ("C-c g c" . git-link-commit)))
