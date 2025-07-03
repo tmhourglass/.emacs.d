@@ -243,6 +243,9 @@
 [submodule "flycheck"]
 	path = lib/flycheck
 	url = https://github.com/flycheck/flycheck
+[submodule "flycheck-posframe"]
+	path = lib/flycheck-posframe
+	url = https://github.com/alexmurray/flycheck-posframe
 [submodule "flyspell-correct"]
 	path = lib/flyspell-correct
 	url = https://github.com/d12frosted/flyspell-correct
