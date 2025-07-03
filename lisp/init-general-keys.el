@@ -46,7 +46,8 @@
     ;; 错误处跳转，先使用SPC t s激活flycheck-mode才能使用
     "en" 'my-goto-next-error
     "ep" 'my-goto-previous-error
-    "el" 'my-list-errors)
+    "el" 'my-list-errors
+    )
 
   (+general-global-menu! "file" "f"
     "f" 'find-file

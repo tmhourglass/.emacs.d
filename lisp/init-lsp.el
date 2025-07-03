@@ -19,7 +19,7 @@
   (define-key evil-normal-state-map "ga" #'eglot-code-actions))
 
 
-;; 关于使用lsp-bridge替换eglot：发动有些大，需单独进行测试
+;; 关于使用lsp-bridge替换eglot：改动有些大，需单独进行测试
 ;; 禁用其他补全插件 lsp-mode、eglot、company、corfu  -- 有其他补全插件，相互有引用，不方便直接禁用，暂时不用
 
 ;; 重新配置eglot，涉及flymake与flycheck，建议原生的flymake
