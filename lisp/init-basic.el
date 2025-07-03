@@ -258,6 +258,7 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
 ;; smartparens 处理括号对并使其智能化
 ;; 从lisp模式中去掉特殊几个配对，针对C模式特殊处理
 (use-package smartparens
+  :defer 3
   :init
   (smartparens-global-mode t)
   (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)

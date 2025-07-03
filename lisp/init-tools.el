@@ -46,7 +46,7 @@
 ;; 当前多点编辑使用这个
 (use-package evil-multiedit
   :commands (evil-multiedit-default-keybinds)
-  :init
+  :config
   (evil-multiedit-default-keybinds))
 
 
@@ -144,7 +144,7 @@
 ;; https://github.com/emacsorphanage/quickrun
 (use-package quickrun
   :commands (quickrun)
-  :init
+  :config
   (quickrun-add-command "c++/c1z"
     '((:command . "g++")
       (:exec . ("%c -std=c++1z %o -o %e %s"

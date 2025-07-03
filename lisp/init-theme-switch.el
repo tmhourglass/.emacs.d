@@ -91,9 +91,9 @@
     "v" 'theme-switch-preview
     "m" 'theme-switch-menu)
 
-
-  ;; 主题切换菜单
-  :bind ("s-\\" . theme-switch-menu)
+  ;; 触发按键
+  :bind (("C-c t m" . theme-swithch-day-mode)
+         ("s-\\" . theme-switch-menu))
   )
 
 (provide 'init-theme-switch)

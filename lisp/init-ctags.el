@@ -10,7 +10,7 @@
 
 ;; A fancy ctags frontend
 (use-package citre
-  :init
+  :config
   ;; Load the prelude.
   (require 'citre-config)
   :bind (("C-c c j" . citre-jump)
@@ -22,8 +22,6 @@
   (citre-enable-capf-integration nil)
   (citre-prompt-language-for-ctags-command t)
   (citre-auto-enable-citre-mode-modes '(prog-mode)))
-
-
 
 (provide 'init-ctags)
 

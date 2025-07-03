@@ -9,7 +9,6 @@
 ;;; Code:
 
 (use-package translate-region
-  :defer t                              ; 延迟加载以提升启动速度
   :after gptel
   :commands (translate-region translate-region-zh-en translate-region-naming
                               translate-region-to-snake-case translate-region-to-pascal-case
@@ -80,38 +79,16 @@
     (interactive)
     (translate-region-naming 'SCREAMING_SNAKE_CASE))
 
-  (defun my/switch-translate-backend ()
-    "在translate-shell和gptel之间切换翻译后端。"
-    (interactive)
-    (setq translate-region-backend
-          (if (eq translate-region-backend 'translate-shell)
-              'gptel
-            'translate-shell))
-    (message "翻译后端已切换到: %s" translate-region-backend))
-
-  (defun my/translate-region-with-style ()
-    "交互式选择命名风格进行翻译。"
-    (interactive)
-    (let ((style (completing-read "选择命名风格: "
-                                  '("camelCase" "PascalCase" "snake_case"
-                                    "kebab-case" "SCREAMING_SNAKE_CASE")
-                                  nil t)))
-      (translate-region-naming (intern style))))
-
-  (defun my/show-translate-config ()
-    "显示当前翻译配置。"
-    (interactive)
-    (message "翻译后端: %s | 默认命名风格: %s"
-             translate-region-backend
-             translate-region-naming-style))
   ;; 快捷键设定
-  (+general-global-menu! "trans" "m"
+  (+general-global-menu! "trans-region" "tr"
     "t" 'translate-region-zh-en
     "b" 'translate-region-toggle-backend
     "n" 'translate-region-naming
     "i" 'translate-region-naming-interactive
     "s" 'translate-region-to-snake-case
     "p" 'translate-region-to-pascal-case
+    "k" 'my/translate-region-to-kebab-case
+    "S" 'my/translate-region-to-screaming-snake-case
     "c" 'translate-region-to-camel-case)
 
 
@@ -119,18 +96,10 @@
   ;; 按键绑定
   ;; ==============================
 
-  :bind (("C-c t r" . translate-region)
-         ("C-c t z" . translate-region-zh-en)
+  :bind (("C-c t r" . translate-region-zh-en)
          ;; 新增一个快捷键
-         ("s-." . translate-region-zh-en)
-         ("C-c t s" . translate-region-to-snake-case)
-         ("C-c t p" . translate-region-to-pascal-case)
-         ("C-c t c" . translate-region-to-camel-case)
-         ("C-c t k" . my/translate-region-to-kebab-case)
-         ("C-c t S" . my/translate-region-to-screaming-snake-case)
-         ("C-c t w" . my/translate-region-with-style)
-         ("C-c t b" . my/switch-translate-backend)
-         ("C-c t i" . my/show-translate-config)))
+         ("s-." . translate-region-zh-en))
+  )
 
 
 (provide 'init-translate-region)

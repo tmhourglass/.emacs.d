@@ -11,8 +11,7 @@
 
 ;; emacs中方便的按键绑定
 (use-package general
-  :demand t                             ;立即加载general
-  :init
+  :config
   (general-emacs-define-key 'global [remap imenu] 'consult-imenu)
   (general-emacs-define-key 'global [remap apropos] 'consult-apropos)
   (global-definer

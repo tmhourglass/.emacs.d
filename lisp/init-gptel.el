@@ -9,7 +9,6 @@
 ;;; Code:
 
 (use-package gptel
-  :defer t  ; 延迟加载以提升启动速度
   :commands (gptel start-gptel gptel-send gptel-return-dwim)
   :init
   ;; 在包加载前设置API密钥
