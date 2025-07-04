@@ -1,4 +1,7 @@
 [include]
+[submodule "2048-game"]
+	path = lib/2048-game
+	url = git@github.com:emacsmirror/2048-game.git
 [submodule "ace-window"]
 	path = lib/ace-window
 	url = https://github.com/abo-abo/ace-window
@@ -246,6 +249,9 @@
 [submodule "flycheck-posframe"]
 	path = lib/flycheck-posframe
 	url = https://github.com/alexmurray/flycheck-posframe
+[submodule "flymake-posframe"]
+	path = lib/flymake-posframe
+	url = https://github.com/Ladicle/flymake-posframe.git
 [submodule "flyspell-correct"]
 	path = lib/flyspell-correct
 	url = https://github.com/d12frosted/flyspell-correct
