@@ -246,9 +246,6 @@
 [submodule "flycheck"]
 	path = lib/flycheck
 	url = https://github.com/flycheck/flycheck
-[submodule "flycheck-posframe"]
-	path = lib/flycheck-posframe
-	url = https://github.com/alexmurray/flycheck-posframe
 [submodule "flymake-posframe"]
 	path = lib/flymake-posframe
 	url = https://github.com/Ladicle/flymake-posframe.git
