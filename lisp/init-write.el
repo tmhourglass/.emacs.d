@@ -10,6 +10,7 @@
 
 
 ;; 输入法切换 sis/rime用其一
+;; 获取当前输入法id的方法: 在终端中切换到中文，用macism查看
 (use-package sis
   :demand t
   ;; :bind ("<f10>" . sis-switch)   ; s-e global keybings
@@ -17,7 +18,11 @@
   (add-to-list 'sis-prefix-override-keys "M-s")
   (add-to-list 'sis-prefix-override-keys "M-g")
   (when sys/macp
-    (sis-ism-lazyman-config "com.apple.keylayout.ABC" "im.rime.inputmethod.Squirrel.Hans"))
+    ;; 鼠须管 squirrel
+    ;; (sis-ism-lazyman-config "com.apple.keylayout.ABC" "im.rime.inputmethod.Squirrel.Hans")
+    ;; 小企鹅fcitx5
+    (sis-ism-lazyman-config "com.apple.keylayout.ABC" "org.fcitx.inputmethod.Fcitx5.zhHans")
+    )
   (when (eq system-type 'gnu/linux)
     (sis-ism-lazyman-config "1" "2" 'fcitx5))
 

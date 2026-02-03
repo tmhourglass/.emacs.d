@@ -77,7 +77,7 @@
     "c" 'clone-indirect-buffer
     "C" 'clone-indirect-buffer-other-window
     "y" 'my/copy-current-buffername
-    "v" 'revert-buffer-quick
+    "v" 'revert-buffer-quick            ;恢复保存时的状态，丢弃未保存的内容
     "x" 'scratch-buffer
     "z" 'bury-buffer
     ;; "d" 'kill-current-buffer
