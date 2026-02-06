@@ -472,7 +472,7 @@ open and unsaved."
   (interactive)
   (if (use-region-p)
       (progn
-        (highlight-frame-toggle)
+        ;; (highlight-frame-toggle)
         (deactivate-mark))
     (symbol-overlay-put)))
 
