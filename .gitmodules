@@ -417,6 +417,9 @@
 [submodule "org-download"]
 	path = lib/org-download
 	url = https://github.com/abo-abo/org-download
+[submodule "org-journal"]
+	path = lib/org-journal
+	url = https://github.com/bastibe/org-journal
 [submodule "org-modern"]
 	path = lib/org-modern
 	url = https://github.com/minad/org-modern
