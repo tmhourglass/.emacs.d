@@ -55,47 +55,32 @@
 ;; 进入该模式时，按e即可进入iedit-mode
 (use-package expand-region
   :config
-  (defadvice er/prepare-for-more-expansions-internal
-      (around helm-ag/prepare-for-more-expansions-internal activate)
-    ad-do-it
-    (let ((new-msg (concat (car ad-return-value)
-                           ", H to highlight in buffers"
-                           ", / to search in project, "
-                           "e iedit mode in functions"
-                           "f to search in files, "
-                           "b to search in opened buffers"))
-          (new-bindings (cdr ad-return-value)))
-      (cl-pushnew
-       '("H" (lambda ()
-               (interactive)
-               (call-interactively
-                'my/highlight-dwim)))
-       new-bindings)
-      (cl-pushnew
-       '("/" (lambda ()
-               (interactive)
-               (call-interactively
-                'my/search-project-for-symbol-at-point)))
-       new-bindings)
-      (cl-pushnew
-       '("e" (lambda ()
-               (interactive)
-               (call-interactively
-                'evil-multiedit-match-all)))
-       new-bindings)
-      (cl-pushnew
-       '("f" (lambda ()
-               (interactive)
-               (call-interactively
-                'find-file)))
-       new-bindings)
-      (cl-pushnew
-       '("b" (lambda ()
-               (interactive)
-               (call-interactively
-                'consult-line)))
-       new-bindings)
-      (setq ad-return-value (cons new-msg new-bindings)))))
+  (defun my-expand-region-advice (orig-func &rest args)
+    "增强 expand-region 的功能，添加自定义绑定。"
+    (let* ((result (apply orig-func args))
+           (old-msg (car result))
+           (old-bindings (cdr result))
+           ;; 添加新的绑定到旧绑定后面
+           (extra-bindings
+            '(("H" (lambda () (interactive) (call-interactively 'my/highlight-dwim)))
+              ("/" (lambda () (interactive) (call-interactively 'my/search-project-for-symbol-at-point)))
+              ("e" (lambda () (interactive) (call-interactively 'evil-multiedit-match-all)))
+              ("f" (lambda () (interactive) (call-interactively 'find-file)))
+              ("b" (lambda () (interactive) (call-interactively 'consult-line)))))
+           (new-bindings (append old-bindings extra-bindings))
+           (new-msg (concat old-msg
+                            ", H to highlight in buffers"
+                            ", / to search in project"
+                            ", e for iedit mode in functions"
+                            ", f to search in files"
+                            ", b to search in opened buffers")))
+      ;; 返回修改后的消息和绑定
+      (cons new-msg new-bindings)))
+
+  ;; 应用建议
+  (advice-add 'er/prepare-for-more-expansions-internal
+              :around
+              #'my-expand-region-advice))
 
 ;; 定义服务，以便快速启动  hugo
 ;; (use-package prodigy

@@ -38,12 +38,15 @@
     ;;mimic "nzz" behaviou in vim
     ;; 模仿nzz行为，跳转到某一行，并在中间位置显示
     ;; n为具体数字，normal模式下直接按，快速跳转到某一行
-    (defadvice evil-search-next (after advice-for-evil-search-next activate)
-      (evil-scroll-line-to-center (line-number-at-pos)))
+    ;; 为evil-search-next添加后置建议
+    (advice-add 'evil-search-next :after
+                (lambda (&rest args)
+                  (evil-scroll-line-to-center (line-number-at-pos))))
 
-    (defadvice evil-search-previous (after advice-for-evil-search-previous activate)
-      (evil-scroll-line-to-center (line-number-at-pos)))
-
+    ;; 为evil-search-previous添加后置建议
+    (advice-add 'evil-search-previous :after
+                (lambda (&rest args)
+                  (evil-scroll-line-to-center (line-number-at-pos))))
 
     ;; 拷贝时保持光标位置不变
     (defun my-evil-yank ()

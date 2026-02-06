@@ -70,17 +70,28 @@
 
 
     ;; https://emacs-china.org/t/ox-hugo-auto-fill-mode-markdown/9547/4
-    (defadvice org-hugo-paragraph (before org-hugo-paragraph-advice
-                                          (paragraph contents info) activate)
+    (defun org-hugo-paragraph-fix-chinese-lines (paragraph contents info)
       "Join consecutive Chinese lines into a single long line without
 unwanted space when exporting org-mode to hugo markdown."
-      (let* ((origin-contents (ad-get-arg 1))
-             (fix-regexp "[[:multibyte:]]")
+      (let* ((fix-regexp "[[:multibyte:]]")
              (fixed-contents
               (replace-regexp-in-string
                (concat
-                "\\(" fix-regexp "\\) *\n *\\(" fix-regexp "\\)") "\\1\\2" origin-contents)))
-        (ad-set-arg 1 fixed-contents)))
+                "\\(" fix-regexp "\\) *\n *\\(" fix-regexp "\\)") "\\1\\2" contents)))
+        fixed-contents))
+
+    ;; 使用advice-add添加前置建议
+    (advice-add 'org-hugo-paragraph :filter-args
+                (lambda (args)
+                  (let ((paragraph (nth 0 args))
+                        (contents (nth 1 args))
+                        (info (nth 2 args)))
+                    (list paragraph
+                          (org-hugo-paragraph-fix-chinese-lines paragraph contents info)
+                          info))))
+
+    ;; 如果需要移除advice，可以调用以下代码
+    ;; (advice-remove 'org-hugo-paragraph org-hugo-paragraph-advice)
 
 
     (require 'org-tempo)
