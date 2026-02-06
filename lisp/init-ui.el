@@ -18,6 +18,8 @@
 ;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
 ;;   (load-theme 'doom-one t))
 
+;; 加载默认主题
+(load-theme 'sanityinc-solarized-light t)
 
 ;; macos中设置标题栏匹配当前系统主题
 (use-package ns-auto-titlebar
