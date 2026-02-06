@@ -192,7 +192,7 @@ object (e.g., within a comment).  In these case, you need to use
 
     ;; 日志中手动插入日期
     ;; 放在init-general-keys中不生效，可能因为org未加载
-    (define-key org-mode-map  (kbd "C-c j") 'my/insert-journal-date)
+    ;; (define-key org-mode-map  (kbd "C-c j") 'my/insert-journal-date)
 
 
     ;; 新发现的功能：在org-mode中的nornal下，若当前是列表，按 + 可循环切换列表的编号样式
@@ -596,10 +596,11 @@ object (e.g., within a comment).  In these case, you need to use
             ("l" "links" entry (file+headline org-agenda-file-note "Quick notes")
              "* TODO [#C] %?\n  %i\n %a \n %U"
              :empty-lines 1)
-            ("j" "Journal Entry"
-             entry (file+datetree org-agenda-file-journal)
-             "* %?"
-             :empty-lines 1)))
+            ;; ("j" "Journal Entry"
+            ;;  entry (file+datetree org-agenda-file-journal)
+            ;;  "* %?"
+            ;;  :empty-lines 1)
+            ))
 
     (with-eval-after-load 'org-capture
       (defun org-hugo-new-subtree-post-capture-template ()

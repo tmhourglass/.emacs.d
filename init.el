@@ -99,6 +99,7 @@
 
 ;; Tools
 (require 'init-org)
+(require 'init-journal)
 (require 'init-git)
 (require 'init-ctags)
 (require 'init-syntaxcheck)
