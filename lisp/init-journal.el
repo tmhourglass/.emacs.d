@@ -22,9 +22,6 @@
         org-journal-time-format " "
         org-journal-time-prefix "** "
 
-        ;; 中文日期格式（可选）
-        org-journal-date-format-cn "%Y年%m月%d日 %A"
-
         ;; 启用自动完成标签
         org-journal-enable-tag-auto-completion t
 
@@ -33,19 +30,19 @@
         org-journal-search-backend 'rg  ; 或 'swiper, 'helm 等
 
         ;; 设置日记文件模板
-        org-journal-file-header-function
-        (lambda (file)
-          (let ((year (string-to-number (substring file 0 4)))
-                (month (string-to-number (substring file 5 7))))
-            (format "#+TITLE: %d年%02d月日记\n#+STARTUP: overview\n#+CATEGORY: Journal\n\n"
-                    year month)))
+        org-journal-file-header (let ((year (format-time-string "%Y"))
+                                      (month (format-time-string "%m")))
+                                  (format "#+TITLE: %s年%s月日记\n#+STARTUP: overview\n#+CATEGORY: Journal\n\n"
+                                          year month))
 
         ;; 设置时区为中国时区
         org-journal-time-zone +8)
 
   ;; 快捷键设置
+  ;; calendar中选择日期，+n -n / shift+方向键 / c-f c-b c-a m-a c-e m-e m-{} . o
   (global-set-key (kbd "C-c j d") 'org-journal-new-date-entry)
   (global-set-key (kbd "C-c j n") 'org-journal-new-entry)
+  ;; 在org-journal-mode中，可直接使用C-c C-s
   (global-set-key (kbd "C-c j s") 'org-journal-search)
   (global-set-key (kbd "C-c j c") 'org-journal-calendar)
   (global-set-key (kbd "C-c j o") 'org-journal-open-current-journal-file)
@@ -141,9 +138,10 @@
   ;; 集成 org-capture（可选）
   (when (boundp 'org-capture-templates)
     (add-to-list 'org-capture-templates
-                 '("j" "Journal entry" entry
-                   (file+olp+datetree (lambda () (org-journal--get-entry-path)))
-                   "* %U %?"))))
+                 '("j" "Journal Entry" entry (file+headline (lambda () (org-journal--get-entry-path))
+                                                            (lambda () (format-time-string "%Y-%m-%d %A")))
+                   "** %?"
+                   :empty-lines 1))))
 
 (provide 'init-journal)
 
