@@ -19,9 +19,9 @@
   (add-to-list 'sis-prefix-override-keys "M-g")
   (when sys/macp
     ;; 鼠须管 squirrel
-    ;; (sis-ism-lazyman-config "com.apple.keylayout.ABC" "im.rime.inputmethod.Squirrel.Hans")
+    (sis-ism-lazyman-config "com.apple.keylayout.ABC" "im.rime.inputmethod.Squirrel.Hans")
     ;; 小企鹅fcitx5
-    (sis-ism-lazyman-config "com.apple.keylayout.ABC" "org.fcitx.inputmethod.Fcitx5.zhHans")
+    ;; (sis-ism-lazyman-config "com.apple.keylayout.ABC" "org.fcitx.inputmethod.Fcitx5.zhHans")
     )
   (when (eq system-type 'gnu/linux)
     (sis-ism-lazyman-config "1" "2" 'fcitx5))
