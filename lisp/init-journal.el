@@ -30,10 +30,12 @@
         org-journal-search-backend 'rg  ; 或 'swiper, 'helm 等
 
         ;; 设置日记文件模板
-        org-journal-file-header (let ((year (format-time-string "%Y"))
-                                      (month (format-time-string "%m")))
-                                  (format "#+TITLE: %s年%s月日记\n#+STARTUP: overview\n#+CATEGORY: Journal\n\n"
-                                          year month))
+        org-journal-file-header
+        (lambda (time)
+          (let* ((year (format-time-string "%Y" time))
+                 (month (format-time-string "%m" time)))
+            (format "#+TITLE: %s 年 %s 月日记\n#+STARTUP: overview\n#+CATEGORY: Journal\n#+OPTIONS: ^:nil toc:t\n\n* "
+                    year month)))
 
         ;; 设置时区为中国时区
         org-journal-time-zone +8)
