@@ -360,6 +360,9 @@
 	path = lib/magit
 	url = https://github.com/magit/magit.git
 	no-byte-compile = lisp/magit-libgit.el
+[submodule "magit-prime"]
+	path = lib/magit-prime
+	url = https://github.com/Azkae/magit-prime.git
 [submodule "makey"]
 	path = lib/makey
 	url = https://github.com/mickeynp/makey

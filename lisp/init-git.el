@@ -45,6 +45,11 @@
          ("C-c g c" . git-link-commit)))
 
 
+;; Prime cache before Magit refresh
+(use-package magit-prime
+  :diminish
+  :hook after-init)
+
 
 (provide 'init-git)
 
