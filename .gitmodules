@@ -363,6 +363,9 @@
 [submodule "magit-prime"]
 	path = lib/magit-prime
 	url = https://github.com/Azkae/magit-prime.git
+[submodule "magit-todos"]
+	path = lib/magit-todos
+	url = https://github.com/alphapapa/magit-todos
 [submodule "makey"]
 	path = lib/makey
 	url = https://github.com/mickeynp/makey

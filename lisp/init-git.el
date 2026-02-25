@@ -51,6 +51,15 @@
   :hook after-init)
 
 
+;; Show TODOs in Magit
+(use-package magit-todos
+  :after magit-status
+  :commands magit-todos-mode
+  :init
+  (setq magit-todos-nice (if (executable-find "nice") t nil))
+  (magit-todos-mode 1))
+
+
 (provide 'init-git)
 
 ;;; init-git.el ends here
