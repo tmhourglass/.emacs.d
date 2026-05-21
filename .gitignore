@@ -36,3 +36,4 @@ private.el
 # borg.sh 通过重新编译安装realpath.c，支持了--relative-to选项
 #/lib/borg
 .aider*
+.claude
