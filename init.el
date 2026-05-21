@@ -100,7 +100,12 @@
 ;; (require 'init-dirvish)
 
 ;; Tools
-(require 'init-org)
+;; Org
+(require 'init-org-core)
+(require 'init-org-agenda)
+(require 'init-org-roam)
+(require 'init-org-export)
+(require 'init-org-appearance)
 (require 'init-journal)
 (require 'init-git)
 (require 'init-ctags)
