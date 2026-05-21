@@ -1,0 +1,208 @@
+#+title: 模块总览
+
+* 目的
+这份文档从“当前代码结构”映射到“用户可感知能力”，主要回答两个问题：
+
+- 现在每个模块分别负责什么
+- 后续重构时，哪些地方是比较自然的拆分边界
+
+* 当前的模块化程度
+目前仓库已经具备“按文件拆分”的模块化雏形：
+
+- 大多数功能在 =lisp/init-*.el= 中
+- =init.el= 作为统一入口顺序加载这些模块
+
+但当前还没有实现“真正的按需模块化”：
+
+- =init.el= 仍然同步 =require= 大部分模块
+- 即使模块内部用了 =use-package :defer=，模块文件本身仍然会在启动期被加载
+
+因此，后续重构的关键不只是“继续拆文件”，而是要把“模块入口策略”也一起重构。
+
+* 模块地图
+** 核心基础层
+- =lisp/init-const.el=
+  - 常量定义，例如 Org 目录
+- =lisp/init-funcs.el= / =init-funcs-org.el= / =init-funcs-edit.el=
+  - 全局辅助函数（通用 / Org 相关 / 编辑增强）
+- =lisp/init-generic.el=
+  - 内置变量、性能参数、交互默认值
+- =lisp/init-basic.el=
+  - 基础包与编辑增强
+
+说明：
+
+- 这一层最接近未来的 =core/= 层
+- 后续可以继续整理，但大方向上适合保留为“启动早期加载”
+
+** 编辑与补全层
+- =lisp/init-completion.el=
+  - Corfu / Vertico / Orderless / Consult / Embark / Cape
+- =lisp/init-evil.el=
+  - Evil 生态
+- =lisp/init-tools.el=
+  - region、multi-edit、quick tools
+- =lisp/init-snippets.el=
+  - yasnippet
+- =lisp/init-global-keys.el=
+  - 全局直接按键
+- =lisp/init-general-keys.el=
+  - =SPC= 菜单式按键
+
+对应的用户能力：
+
+- 命令补全
+- 搜索与跳转
+- 代码补全
+- 多点编辑
+- snippet
+
+重构建议：
+
+- 这一组模块之间耦合较强，适合成组维护
+- 不建议拆得过碎，否则按键、补全、动作系统之间会来回跳
+
+** UI / 窗口 / 工作区层
+- =lisp/init-ui.el=
+- =lisp/init-window.el=
+- =lisp/init-tabspace.el=
+- =lisp/init-dashboard.el=
+- =lisp/init-theme-switch.el=
+- =lisp/init-font.el=
+
+对应的用户能力：
+
+- 界面美化
+- modeline 与图标
+- popup 管理
+- tab/workspace 工作区
+- dashboard 首页
+- 字体和主题控制
+
+重构建议：
+
+- 这些模块天然适合作为未来 =ui/= 层
+- 其中 dashboard、theme-switch、部分窗口逻辑都很适合进一步懒加载
+
+** 文件 / 阅读 / 写作层
+- =lisp/init-dired.el=
+- =lisp/init-read.el=
+- =lisp/init-write.el=
+- =lisp/init-dict.el=
+
+对应的用户能力：
+
+- 文件浏览
+- 专注写作
+- PDF/EPUB 阅读
+- 中英文排版
+- 词典与翻译
+
+重构建议：
+
+- =pdf-tools=、翻译、词典这类明显不是启动必需的能力，适合延后加载
+
+** Org 与知识管理层
+- =lisp/init-org-core.el= — Org 基础行为（缩进/强调/babel/encrypt/refile/clock）
+- =lisp/init-org-agenda.el= — Agenda/GTD/capture/pomodoro/super-agenda
+- =lisp/init-org-roam.el= — org-roam + consult-org-roam + org-roam-ui
+- =lisp/init-org-export.el= — ox-hugo/ox-gfm/ox-md/latex/publish
+- =lisp/init-org-appearance.el= — superstar/toc-org/org-appear/org-present
+- =lisp/init-journal.el=
+
+对应的用户能力：
+
+- agenda / GTD
+- capture
+- roam
+- journal
+- present
+- export
+
+重构建议：
+
+- 这是当前最值得继续拆分的大模块
+- 后续至少可以考虑拆成：
+  - Org core
+  - agenda / capture
+  - roam
+  - export
+  - presentation
+
+** 编程支持层
+- =lisp/init-lsp.el=
+- =lisp/init-programming.el=
+- =lisp/init-python.el=
+- =lisp/init-lisp.el=
+- =lisp/init-syntaxcheck.el=
+- =lisp/init-ctags.el=
+
+对应的用户能力：
+
+- LSP
+- tree-sitter
+- 格式化
+- 语法检查
+- 语言专项支持
+- tag / symbol 跳转
+
+重构建议：
+
+- =init-programming.el= 当前混合了太多职责，是后续拆分重点之一
+- =init-python.el= 和 =init-lisp.el= 已经有较清楚的语言边界
+
+** AI 与智能辅助层
+- =lisp/init-aidermacs.el=
+- =lisp/init-gptel.el=
+- =lisp/init-translate-region.el=
+
+对应的用户能力：
+
+- 聊天式 AI
+- 代码辅助
+- 翻译
+- 命名风格转换
+
+重构建议：
+
+- 这一层天然适合做成“纯按需加载”
+- 因为它依赖网络、本地服务和秘钥文件，不应该在启动期做过多初始化
+
+** Git 与项目层
+- =lisp/init-git.el=
+- =lisp/init-tabspace.el=
+- =lisp/init-lsp.el=
+- =lisp/init-ctags.el=
+
+对应的用户能力：
+
+- Git 状态查看
+- 项目切换
+- 项目检索
+- 代码导航
+
+说明：
+
+- 这一层和 Borg/submodule 包管理方式是直接配套的
+
+* 当前最自然的重构边界
+按现有结构看，后续最低风险的分层可以是：
+
+- =core=：启动、常量、函数、基础行为
+- =editor=：evil、completion、snippets、keybindings、tools
+- =ui=：dashboard、theme、window、workspace、font
+- =knowledge=：org、journal、roam
+- =dev=：lsp、syntaxcheck、ctags、programming、language modules
+- =writing=：read、write、dict、输入法
+- =ai=：gptel、aidermacs、translate-region
+
+* 兼容性基线
+后续重构时，优先保持这些不变：
+
+- =SPC= 菜单结构
+- =C-s=、=C-c a=、=C-c r=、=C-c s= 等高频按键
+- Borg 包管理工作流
+- Org 目录与 journaling 工作流
+- AI / 翻译相关主要入口
+
+如果后面必须调整这些入口，应当单独写迁移说明。

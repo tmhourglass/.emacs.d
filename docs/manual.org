@@ -1,0 +1,439 @@
+#+title: TMHOURGLASS Emacs 使用手册
+
+* 文档说明
+这份文档描述的是当前仓库里这套 Emacs 配置“已经具备的能力”和“现有的使用方式”。
+
+它的定位不是未来设计稿，而是重构前的行为基线，主要用于：
+
+- 帮助自己快速回忆这套配置能做什么
+- 在后续模块化和懒加载重构时做回归对照
+- 给未来的维护者提供入口索引
+
+当前配置的基础前提：
+
+- Emacs 版本要求：=30.1+=
+- 包管理基线：=borg + git submodule=
+- 主配置目录：=lisp/init-*.el=
+
+* 启动与整体结构
+启动入口有两个：
+
+- =early-init.el=
+- =init.el=
+
+当前启动过程大致是：
+
+1. 在 =early-init.el= 中先做启动期优化和界面裁剪
+2. 在 =init.el= 中提升 GC 阈值、关闭部分启动期文件处理开销
+3. 提前初始化 Borg
+4. 初始化 =use-package=
+5. 顺序加载大部分 =lisp/init-*.el= 模块
+
+这意味着当前配置虽然已经“按文件分模块”，但仍然不是“真正按需加载”的结构。后续启动优化会主要围绕这一点展开。
+
+详见 [[file:modules/startup-and-core.org][modules/startup-and-core.org]]。
+
+* 这套配置的核心使用体验
+当前最主要的工作流可以概括为：
+
+- 使用 =evil= 进行类 Vim 编辑
+- 使用 =vertico + orderless + consult= 做 minibuffer 补全与搜索
+- 使用 =corfu + cape= 做缓冲区内代码补全
+- 使用 =org= 做 agenda、capture、journal、roam、演示与导出
+- 使用 =eglot=、=citre=、=project.el= 做代码导航和项目操作
+- 使用 =magit= 管理 Git 与 submodule
+- 使用写作、阅读、翻译、词典、输入法相关模块辅助中英文工作流
+- 使用 =gptel= 和 =aidermacs= 接入 AI 能力
+
+* 模块使用说明
+** 1. 基础编辑体验
+相关模块：
+
+- =lisp/init-basic.el=
+- =lisp/init-evil.el=
+- =lisp/init-tools.el=
+- =lisp/init-snippets.el=
+
+提供的能力：
+
+- Evil 基础编辑、文本对象、surround、matchit、snipe
+- 结构化编辑和缩进优化
+- 区域扩展、多点编辑、独立编辑注释/字符串
+- snippet 展开与查询
+- 撤销树替代方案 =vundo=
+
+常用入口：
+
+- =s-d=：常用的区域扩展/多点编辑入口
+- =C-==：=er/expand-region=
+- =M-s e=：=iedit-mode=
+- =C-c '=：=separedit=
+- =M-*=：=consult-yasnippet=
+
+说明：
+
+- 这套配置里，多点编辑并不只依赖一个包，而是组合使用 =expand-region=、=iedit=、=evil-multiedit=
+- =expand-region= 被增强过，进入扩展状态后还可进一步触发高亮、项目搜索、批量编辑等动作
+
+** 2. 补全、搜索与命令选择
+相关模块：
+
+- =lisp/init-completion.el=
+- =lisp/init-global-keys.el=
+- =lisp/init-general-keys.el=
+
+提供的能力：
+
+- minibuffer 补全：=vertico=
+- 匹配策略：=orderless=
+- 命令和内容搜索：=consult=
+- 动作扩展：=embark=
+- 缓冲区内代码补全：=corfu=
+- completion-at-point 增强：=cape=
+
+常用入口：
+
+- =C-s=：当前 buffer 搜索，绑定到 =consult-line=
+- =M-y=：=consult-yank-pop=
+- =SPC s s=：当前 buffer 搜索
+- =SPC s p=：项目全文搜索
+- =SPC b b=：切换 buffer
+- =SPC f d=：=consult-dir=
+- =C-c p p=：=completion-at-point=
+
+补全特点：
+
+- 图形界面下启用 =corfu=
+- =corfu= 自动补全默认开启
+- =orderless= 同时用于命令、symbol、变量等匹配
+- 在 =eglot= 管理的 buffer 中，会把 LSP completion 与 snippet completion 组合起来
+
+中文相关：
+
+- 当前配置里有拼音匹配和中文搜索相关尝试，但其中一部分注释已经说明“在 Borg 版本下不完全稳定”
+- 这类行为后续重构时需要单独验证
+
+** 3. 文件、目录与缓冲区
+相关模块：
+
+- =lisp/init-dired.el=
+- =lisp/init-window.el=
+- =lisp/init-global-keys.el=
+- =lisp/init-general-keys.el=
+
+提供的能力：
+
+- 增强 Dired 操作
+- 目录排序、Git 信息、rsync 等扩展
+- buffer 切换、窗口移动、popup 管理
+
+常用入口：
+
+- =SPC f f=：打开文件
+- =SPC f j=：跳到当前文件所在目录
+- =SPC f r=：最近文件
+- =SPC b b=：切换 buffer
+- =SPC b k=：关闭当前 buffer
+- =SPC w ...=：窗口相关操作
+
+Dired 增强包括：
+
+- =diredfl=
+- =dired-quick-sort=
+- =dired-git-info=
+- =dired-rsync=
+- =nerd-icons-dired=
+
+说明：
+
+- 仓库里有 =init-dirvish.el=，但当前 =init.el= 中没有启用它
+- 也就是说当前稳定基线仍然以 Dired 为主，而不是 Dirvish
+
+** 4. 窗口、弹窗、工作区与首页
+相关模块：
+
+- =lisp/init-ui.el=
+- =lisp/init-window.el=
+- =lisp/init-tabspace.el=
+- =lisp/init-dashboard.el=
+- =lisp/init-theme-switch.el=
+- =lisp/init-font.el=
+
+提供的能力：
+
+- modeline、美化、图标、平滑滚动、行号显示
+- popup 管理
+- tab/workspace 工作区
+- dashboard 首页
+- 主题切换与日夜模式
+- 中英文字体设置
+
+常用入口：
+
+- =<f3>=：打开 dashboard
+- =C-c d d=：打开 dashboard
+- =SPC l l=：切换/创建 workspace
+- =SPC l p=：按项目打开 workspace
+- =SPC w /=：左右分屏
+- =SPC w -=：上下分屏
+- =SPC w u=：=winner-undo=
+- =SPC w z=：=winner-redo=
+
+说明：
+
+- =dashboard= 当前已经做了一定的延迟初始化处理，只在真正打开时再补全复杂配置
+- =tab-bar= 与 =tabspaces= 同时启用，用于“标签页 + 项目工作区”工作流
+- =theme-switch= 配置了日间/夜间主题与自动切换逻辑
+
+** 5. Org、笔记、日记与知识管理
+相关模块：
+
+- =lisp/init-org-core.el= — Org 基础行为
+- =lisp/init-org-agenda.el= — Agenda/GTD/capture
+- =lisp/init-org-roam.el= — Roam 笔记网络
+- =lisp/init-org-export.el= — 导出（Hugo/Markdown/LaTeX）
+- =lisp/init-org-appearance.el= — 外观（superstar/org-appear/org-present）
+- =lisp/init-journal.el=
+- =lisp/init-write.el=
+- =lisp/init-read.el=
+
+这是当前配置里最重、也最核心的一部分。
+
+提供的能力：
+
+- Agenda / GTD
+- Capture
+- Org Roam
+- Org Journal
+- Pomodoro
+- Presentation
+- 代码块编辑与导出
+- Hugo/Markdown 导出
+- 中文环境下的排版与导出调整
+
+常用入口：
+
+- =C-c a=：=org-agenda=
+- =C-c r=：=org-capture=
+- =SPC o r=：=org-roam-node-find=
+- =C-c j n=：新增今天的 journal
+- =C-c j d=：按日期写 journal
+- =C-c j s=：搜索 journal
+- =SPC t w=：进入专注写作模式
+
+Org 当前的一些重要特性：
+
+- 修改了 =RET= 在 Org 中的行为，兼顾列表、表格、链接和标题
+- 启用了 =org-habit=
+- 启用了 =org-crypt=
+- 配置了 =org-babel= 多语言执行
+- 配置了面向中文 LaTeX/PDF 导出的参数
+- 使用 =org-roam= 做笔记网络
+- 使用 =org-present= 做演示
+
+Journal 当前的工作方式：
+
+- 按月存储
+- 默认目录：=~/Documents/journal/=
+- 支持搜索、日历、跳转上月/本月
+- 提供一个“日记模板插入函数”
+
+说明：
+
+- 原 =init-org.el= 已拆分为 5 个子模块（core / agenda / roam / export / appearance），便于分层加载和维护
+- org-core 在 =after-init-hook= 中加载，不阻塞启动
+
+** 6. 编程支持
+相关模块：
+
+- =lisp/init-lsp.el=
+- =lisp/init-programming.el=
+- =lisp/init-python.el=
+- =lisp/init-lisp.el=
+- =lisp/init-syntaxcheck.el=
+- =lisp/init-ctags.el=
+
+提供的能力：
+
+- LSP 支持：=eglot=
+- 项目/符号跳转：=xref=、=consult-eglot=、=dumb-jump=、=citre=
+- 语法检查：=flycheck= / =flymake=
+- 格式化：=apheleia= / =reformatter=
+- tree-sitter 自动接管 major-mode
+- Python、Lisp 等语言专项支持
+
+常用入口：
+
+- =SPC g g=：跳到定义
+- =SPC g r=：查找引用
+- =SPC c c=：编译
+- =SPC c C=：重新编译
+- =SPC c x=：直接运行当前文件
+- =C-c f=：格式化当前 buffer
+- =SPC t s=：切换 =flycheck-mode=
+
+编程体验特点：
+
+- =treesit-auto= 会自动尝试使用 tree-sitter major mode
+- =apheleia= 用来统一格式化入口
+- Python 默认解释器配置为 =python3=
+- Python 支持 =pyvenv= 和 =auto-virtualenvwrapper=
+- Lisp 开发使用 =lispy=、=lispyville=、=helpful=、=macrostep=
+
+说明：
+
+- =init-programming.el= 目前混合了 tree-sitter、formatter、web-mode、YAML/JSON、conda 等多种职责
+- 这是另一个适合在后续重构里拆开的文件
+
+** 7. Git 与项目工作流
+相关模块：
+
+- =lisp/init-git.el=
+- =lisp/init-tabspace.el=
+- =lisp/init-lsp.el=
+
+提供的能力：
+
+- =magit= 状态查看与提交工作流
+- Git 链接生成
+- TODO 与 submodule 状态辅助
+- 项目切换与项目搜索
+
+常用入口：
+
+- =C-c s=：=magit-status=
+- =SPC g s=：=magit-status=
+- =C-c g l=：生成当前文件/位置的 Git 链接
+- =SPC p f=：项目内找文件
+- =SPC p b=：项目内切 buffer
+- =SPC p p=：切换项目
+
+说明：
+
+- =magit-status= 中显式加入了 submodule 相关 section，和当前 Borg/submodule 工作流是配套的
+- 这套配置本身就是面向“显式管理 submodule”的
+
+** 8. 写作、阅读、输入法与中英文辅助
+相关模块：
+
+- =lisp/init-write.el=
+- =lisp/init-read.el=
+- =lisp/init-font.el=
+- =lisp/init-dict.el=
+
+提供的能力：
+
+- 输入法切换
+- 拼写检查
+- 中英文排版优化
+- Markdown/Org 导出
+- PDF/EPUB 阅读
+- 专注写作模式
+- 词典与翻译
+
+常用入口：
+
+- =s-e=：切换输入法
+- =SPC t w=：=prose-mode=
+- =C-c d f=：=fanyi-dwim=
+- =C-c d g=：=gt-do-translate=
+- =C-c d i=：macOS 词典查词
+
+说明：
+
+- 当前输入法主线是 =sis=
+- 仓库里也保留了 =init-rime.el=，但当前 =init.el= 未启用
+- =pdf-tools= 与 =nov= 分别负责 PDF / EPUB 阅读
+- =pangu-spacing= 用于中英文之间自动加空格
+
+** 9. AI、翻译与辅助命名
+相关模块：
+
+- =lisp/init-gptel.el=
+- =lisp/init-aidermacs.el=
+- =lisp/init-translate-region.el=
+- =lisp/init-dict.el=
+
+提供的能力：
+
+- OpenRouter 聊天
+- 本地 Ollama 聊天
+- aider 驱动的代码辅助
+- 文本翻译
+- 命名风格转换：=snake_case=、=camelCase=、=PascalCase= 等
+
+常用入口：
+
+- =C-c g g=：启动 gptel
+- =C-c g q=：快速聊天 buffer
+- =C-c g o=：切到 Ollama
+- =C-c g r=：切到 OpenRouter
+- =s-/=：打开 aidermacs 菜单
+- =C-c t r=：翻译选区
+
+说明：
+
+- =gptel= 默认优先走 OpenRouter，读取 =~/.config/openrouter/key.txt=
+- 也配置了本地 Ollama 作为备用后端
+- =aidermacs= 会在加载时读取 OpenRouter key，并设置环境变量
+
+* 高频按键索引
+** 直接按键
+- =C-s=：搜索当前 buffer
+- =M-y=：历史 yank
+- =C-c a=：agenda
+- =C-c r=：capture
+- =C-c s=：magit-status
+- =s-e=：切换输入法
+- =s-d=：区域扩展 / 多点编辑入口
+- =<f2>=：打开 init 文件
+- =<f3>=：打开 dashboard
+
+** Leader 菜单
+当前大多数菜单在 =SPC= 下：
+
+- =SPC f=：文件
+- =SPC b=：buffer / bookmark
+- =SPC s=：搜索
+- =SPC l=：布局 / 工作区
+- =SPC w=：窗口
+- =SPC p=：项目
+- =SPC c=：代码
+- =SPC t=：开关
+- =SPC d=：词典 / 翻译
+- =SPC g=：Git / 跳转
+- =SPC o=：打开 / Org 相关入口
+
+* 外部依赖
+这套配置有不少功能依赖外部程序或本地资源：
+
+- =aspell=
+- =python3=
+- =black= / =blue= / =js-beautify= / =html-beautify= / =css-beautify=
+- =translate-shell=
+- =epdfinfo=
+- =rg= / =fd= / =ctags=
+- tree-sitter grammar
+- =~/.config/openrouter/key.txt=
+- 本地 Ollama 服务
+- 输入法相关组件：=sis= / Rime / fcitx5
+
+如果某个功能“命令存在但实际不好用”，优先先查外部依赖，而不是先怀疑 Elisp 配置本身。
+
+* 作为重构基线的要求
+后续重构默认以这份文档为兼容目标，优先保持：
+
+- 当前常用命令入口不变
+- 当前高频按键尽量不变
+- Borg 包管理工作流不变
+- Org / Journal / Roam 目录和使用方式不变
+- AI、翻译、项目、Git 的主要入口不变
+
+继续阅读：
+
+- [[file:modules/overview.org][modules/overview.org]]
+- [[file:modules/package-management.org][modules/package-management.org]]
+- [[file:modules/startup-and-core.org][modules/startup-and-core.org]]
+- [[file:modules/org-knowledge.org][modules/org-knowledge.org]]
+- [[file:modules/completion-and-search.org][modules/completion-and-search.org]]
+- [[file:modules/programming-and-deps.org][modules/programming-and-deps.org]]

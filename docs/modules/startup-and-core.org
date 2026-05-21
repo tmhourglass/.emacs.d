@@ -1,0 +1,161 @@
+#+title: 启动与核心结构
+
+* 文档目的
+这份文档说明当前配置的启动链路、核心模块职责，以及后续做启动优化时最值得关注的点。
+
+* 当前启动流程
+** early-init.el
+当前 =early-init.el= 主要负责：
+
+- 优先加载较新的文件
+- 禁用 =package-enable-at-startup=
+- 关闭 native-comp 的延后/JIT 编译
+- 提前裁剪界面元素
+- 关闭初始未样式化 modeline 闪烁
+- 在 macOS 上做标题栏相关设置
+
+这一层已经比较接近“正确的 early-init 用法”了，后续应该尽量保持精简。
+
+** init.el
+当前 =init.el= 主要负责：
+
+- 检查 Emacs 版本必须 >= 30.1
+- 启动期间临时提高 GC 阈值
+- 将 =lisp/= 加入 =load-path=
+- 启动期临时关闭部分 =file-name-handler-alist= 开销
+- 启动 Borg
+- 初始化 =use-package=
+- 启用 =benchmark-init=
+- 顺序加载大部分 =init-*.el= 模块
+
+当前最大的问题就在最后一条：
+
+- 模块文件几乎都在启动期被同步加载
+- 这让很多“模块内部已经写了 defer”的收益被抵消掉了
+
+* 当前核心支撑模块
+** init-const.el
+负责少量常量，例如 Org 目录。适合继续保留在早期加载集合中。
+
+** init-funcs.el / init-funcs-org.el / init-funcs-edit.el
+负责通用、Org 相关和编辑增强辅助函数，后续大量模块都依赖它们。
+它们适合作为核心层（Layer 0）的一部分存在，按主题拆分后更易于维护。
+
+** init-generic.el
+负责内置变量与默认交互行为，例如：
+
+- UI 默认值
+- 滚动行为
+- 长行与 bidi 性能参数
+- frame 行为
+- process I/O 参数
+- project 查找相关自定义
+
+这一层基本就是当前“全局编辑基线”的重要组成。
+
+** init-basic.el
+当前混合了以下职责：
+
+- =custom-file= 与 =no-littering= 一类基础设施
+- =savehist=、=recentf=、=saveplace=
+- 环境变量导入
+- 结构化编辑和缩进辅助
+- =gcmh=、=envrc=、=vundo= 等增强能力
+
+它属于“核心里带着一些半可选功能”的模块，后续很可能需要继续拆分。
+
+* 当前已有的启动分析工具
+仓库里已经有三套可以直接用的分析工具：
+
+- =benchmark-init=
+  - 用于看 package / require 的耗时
+- =profile-dotemacs.el=
+  - 用于 profile init sexp
+- =lisp/init-benchmark-sort.el=
+  - 给 benchmark 结果提供排序与过滤
+
+对应的 Makefile 入口：
+
+- =make profile=
+
+也就是说，后续做启动优化并不缺工具，缺的是“有节奏地一轮轮测量和收敛”。
+
+* 当前基线测量结果
+** 批处理启动时间基线
+当前已经建立了一份可重复的批处理启动时间基线：
+
+#+begin_src text
+/usr/bin/time -p emacs -Q --batch -l /Users/tmhourglass/.emacs.d/init.el --eval "(message \"batch-profile-baseline-ok\")"
+real 8.79
+user 2.16
+sys 2.29
+#+end_src
+
+这组结果的意义是：
+
+- 证明当前 =init.el= 在批处理模式下可以正常加载
+- 为后续启动优化提供一个不依赖图形界面的对照基线
+- 适合在当前代理执行环境里反复复测
+
+** profile-dotemacs 的限制
+在当前代理执行环境中，=profile-dotemacs= 这条测量链路并不稳定，原因不是配置本身启动失败，而是它依赖交互式 GUI/TTY：
+
+- =make profile= 在当前环境中失败，输出为 =Abort trap: 6=
+- =emacs -Q --batch -l ./profile-dotemacs.el --eval ...= 可以正常预加载 =profile-dotemacs=
+- =emacs -Q --batch -l /Users/tmhourglass/.emacs.d/init.el --eval ...= 可以正常加载 =init=
+- =emacs -Q -nw ... -f profile-dotemacs= 在当前环境报 =Could not open file: /dev/tty=
+
+因此可以把这件事理解为：
+
+- =profile-dotemacs= 更适合真实交互式 Emacs 会话
+- 当前无界面代理环境里，不应把这条链路的失败解读为配置启动失败
+- 若要看 tree / tabulated 视图，建议在真实交互式 GUI 或 TTY 会话里手动运行
+
+** 现阶段结论
+当前文档基线可以这样记：
+
+- 批处理启动基线已可用
+- 交互式 =profile-dotemacs= 链路在当前代理环境里受限
+- =benchmark-init= 的 tree / tabulated 视图仍建议在真实会话中手动查看
+
+* 当前就能看到的启动风险点
+从现在的结构看，启动期的重点风险主要在：
+
+- =init.el= 中的同步 =require=（已改造为分层加载）
+- 原 =init-org.el= → 已拆分为 5 个子模块（core/agenda/roam/export/appearance）
+- 启动即执行的主题/UI配置（已适度延后）
+- dashboard 和 workspace 初始化（已延后至 after-init/idle）
+- 编程支持层，例如 tree-sitter、formatter 注册
+- AI 模块里对本地 key 文件或后端的初始化
+
+README 里也已经记录过一些真实问题，例如：
+
+- 某些 Dired 相关扩展曾明显拖慢启动
+- 需要借助 benchmark 工具定位具体瓶颈
+
+* 后续启动优化建议顺序
+最稳的顺序建议是：
+
+1. 保持 =early-init.el= 稳定且最小
+2. 先识别“真正必须早启动”的核心模块
+3. 逐步减少 =init.el= 中的同步 =require=
+4. 把命令驱动型功能改成 =autoload / :commands / :bind=
+5. 把 mode 驱动型功能改成 =:hook / :mode=
+6. 每做一批就重新测一次
+
+* 启动优化时的兼容性要求
+后续优化时，优先保持以下不变：
+
+- Emacs 版本要求
+- Borg 启动顺序
+- 核心辅助函数可用性
+- 当前高频命令入口
+- Org 目录、项目行为等基础设定
+
+* 重构开始时建议优先审计的点
+真正开始改启动结构时，建议先看：
+
+- =init.el= 里哪些 =require 'init-...= 可以先移除（已改造为分层加载：Layer 0-3 同步、Layer 4 after-init、Layer 5 idle）
+- 各模块顶层有哪些“加载时立即执行”的重逻辑
+- 哪些包已经适合改成 =:commands=、=:hook=、=:mode=、=:bind=（已全面审计并添加显式触发器）
+- =init-basic.el= 和原 =init-org.el= 已完成拆分与懒加载改造
