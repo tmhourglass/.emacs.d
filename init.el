@@ -4,7 +4,7 @@
 
 ;;; Commentary:
 
-;; User init file
+;; User init file. Layered loading for fast startup.
 
 ;;; Code:
 
@@ -54,12 +54,13 @@
   (borg-initialize))
 
 
-(eval-and-compile ; `use-package'
+;; use-package (Emacs 30.1 已内置，仅配置变量)
+(eval-and-compile
   (setq use-package-enable-imenu-support t)
   (setq use-package-expand-minimally t)
   (setq use-package-compute-statistics t)
-  (setq use-package-always-defer t)
-  (require  'use-package))
+  (setq use-package-always-defer t))
+
 
 ;; 优化启动时间
 ;; 必须放在最前面才能收集到（use-package之后）
@@ -70,71 +71,73 @@
   (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
 
-
-;; ========================================
-;;; Private Configuration
-;; ========================================
-
-
-;; 常量及函数定义
+;; ═══════════════════════════════════════════
+;; 第0层：核心基础（同步加载 — 无外部依赖）
+;; ═══════════════════════════════════════════
 (require 'init-const)
 (require 'init-funcs)
 (require 'init-funcs-org)
 (require 'init-funcs-edit)
-
-;; emacs内置变量配置，不依赖于package
 (require 'init-generic)
 
-;; Core
+;; ═══════════════════════════════════════════
+;; 第1层：编辑与补全（同步加载 — 交互必需）
+;; ═══════════════════════════════════════════
 (require 'init-basic)
-(require 'init-completion)
 (require 'init-evil)
+(require 'init-completion)
 
-;; uis
-(require 'init-ui)
+;; ═══════════════════════════════════════════
+;; 第2层：UI 界面（同步加载 — 视觉必需）
+;; ═══════════════════════════════════════════
 (require 'init-font)
+(require 'init-ui)
 (require 'init-window)
 (require 'init-dashboard)
-(require 'init-dired)
 (require 'init-theme-switch)
-;; (require 'init-dirvish)
 
-;; Tools
-;; Org
-(require 'init-org-core)
-(require 'init-org-agenda)
-(require 'init-org-roam)
-(require 'init-org-export)
-(require 'init-org-appearance)
-(require 'init-journal)
-(require 'init-git)
-(require 'init-ctags)
-(require 'init-syntaxcheck)
-(require 'init-write)
-(require 'init-read)
-(require 'init-dict)
-
-;; Frameworks
-(require 'init-tabspace)
-
+;; ═══════════════════════════════════════════
+;; 第3层：按键体系（同步加载 — 用户可感知）
+;; ═══════════════════════════════════════════
 (require 'init-global-keys)
+(require 'init-general-keys)
 (require 'init-tools)
 (require 'init-snippets)
 
-;; ai (aidermacs中的vc-git耗时）
-(require 'init-aidermacs)
-(require 'init-gptel)
-;; trans/gptel
-(require 'init-translate-region)
+;; ═══════════════════════════════════════════
+;; 第4层：Org 与 编程模块（after-init-hook）
+;; ═══════════════════════════════════════════
+(add-hook 'after-init-hook
+          (lambda ()
+            (require 'init-org-core)
+            (require 'init-org-agenda)
+            (require 'init-org-roam)
+            (require 'init-org-export)
+            (require 'init-org-appearance)
+            (require 'init-journal)
+            (require 'init-lsp)
+            (require 'init-lisp)
+            (require 'init-python)
+            (require 'init-programming)
+            (require 'init-syntaxcheck)
+            (require 'init-ctags)))
 
-;; Programming
-(require 'init-lsp)
-(require 'init-lisp)
-(require 'init-python)
-(require 'init-programming)
-(require 'init-general-keys)
-
-;; benchmark
-(require 'init-benchmark-sort)
+;; ═══════════════════════════════════════════
+;; 第5层：非关键模块（idle-timer 后台加载）
+;; ═══════════════════════════════════════════
+(run-with-idle-timer 2 nil
+                     (lambda ()
+                       (require 'init-git)
+                       (require 'init-tabspace)
+                       (require 'init-dired)
+                       (require 'init-write)
+                       (require 'init-read)
+                       (require 'init-dict)
+                       (require 'init-translate-region)
+                       ;; AI 模块进一步延迟
+                       (run-with-idle-timer 5 nil
+                                            (lambda ()
+                                              (require 'init-aidermacs)
+                                              (require 'init-gptel)))))
 
 ;;; init.el ends here
