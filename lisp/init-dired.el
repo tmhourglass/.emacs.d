@@ -81,7 +81,9 @@
 
 ;; 额外的dired功能
 ;; 指定不同文件的打开命令，以及忽略的文件
-(use-package dired-aux :ensure nil)
+(use-package dired-aux
+  :ensure nil
+  :defer t)
 (use-package dired-x
   :demand t
   :commands (dired-jump)

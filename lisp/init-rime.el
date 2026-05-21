@@ -16,7 +16,7 @@
   (setq rime-user-data-dir (expand-file-name "~/Library/Rime"))
   ;; Apple Silicon Homebrew 路径
   (setq rime-librime-root "/opt/homebrew")
-  (setq rime-emacs-module-header-root "/opt/homebrew/bin/emacs/include")
+  (setq rime-emacs-module-header-root "/Applications/Emacs.app/Contents/Resources/include")
 
   ;; ── 候选窗口配置 ──
   (setq rime-show-candidate 'posframe)

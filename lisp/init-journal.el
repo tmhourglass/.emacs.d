@@ -9,8 +9,7 @@
 ;;; Code:
 
 (use-package org-journal
-  :ensure t
-  :defer nil
+  :defer t
   :init
   ;; 基础设置
   (setq org-journal-file-type 'monthly

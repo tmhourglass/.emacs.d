@@ -9,7 +9,8 @@
 ;;; Code:
 
 ;; Elisp兼容库
-(use-package compat)
+(use-package compat
+  :demand t)
 
 ;; 现代库列表API，类似cl-lib （提供很多Emacs可使用的库函数）
 ;; 库中的所有函数和构造都使用破折号（ - ）前缀
@@ -20,15 +21,18 @@
 
 ;; 使用 EmacSQL 存储 EIEIO 对象，sqlite作为后端
 ;; 关联包closql
-(use-package eieio)
+(use-package eieio
+  :defer t)
 
 
 ;; Keep ~/.emacs.d/ clean.
 ;; 不乱丢垃圾，统一放到一处 /etc /var
-(use-package no-littering)
+(use-package no-littering
+  :demand t)
 
 ;; custom文件加载
 (use-package custom
+  :demand t
   :no-require t
   :config
   (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
@@ -37,6 +41,7 @@
 
 ;; 自动编译
 (use-package auto-compile
+  :defer t
   :config
   (setq auto-compile-display-buffer               nil)
   (setq auto-compile-mode-line-counter            t)
@@ -56,9 +61,9 @@
 
 ;; 高亮未提交的变更，可明显看到有变化的地方 -- 编辑内容中也有提示
 (use-package diff-hl
+  :hook (after-init . global-diff-hl-mode)
   :config
   (setq diff-hl-draw-borders nil)
-  (global-diff-hl-mode)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t))
 
 
@@ -74,6 +79,7 @@
 ;;; Isearch settings
 ;; 使用isearch搜索时，会让光标始终在中间
 (use-package isearch
+  :demand t
   :custom
   (isearch-lazy-count t)
   (isearch-allow-motion t)
@@ -108,10 +114,11 @@
 
 ;; Environment 环境变量引入
 (use-package exec-path-from-shell
+  :demand t
   :when (or (memq window-system '(mac ns x))
             (unless (memq system-type '(ms-dos windows-nt))
               (daemonp)))
-  :custom (exec-path-from-shell-arguments '("-l"))
+  :custom (exec-path-from-shell-arguments nil)  ; 不用 -l：避免加载 .zprofile，提速 ~500ms；如需 login shell 变量则加到 exec-path-from-shell-variables
   :config
   (dolist (var '("GPG_AGENT_INFO" "LANG" "LC_CTYPE"))
     (add-to-list 'exec-path-from-shell-variables var))
@@ -203,7 +210,8 @@
 
 
 ;; 简化Tar文件编辑  -- 没用过
-(use-package tar-mode)
+(use-package tar-mode
+  :defer t)
 
 
 ;; 快速重启
@@ -212,6 +220,7 @@
 
 
 (use-package general
+  :demand t
   :init
   (with-eval-after-load 'evil
     (general-add-hook 'after-init-hook
@@ -332,8 +341,7 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
 
 ;; 像素平滑滚动 - 有用
 (use-package ultra-scroll
-  :config
-  (ultra-scroll-mode 1))
+  :hook (after-init . ultra-scroll-mode))
 
 
 

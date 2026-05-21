@@ -13,6 +13,7 @@
 ;; brew install translate-shell
 ;; 改为使用bing
 (use-package immersive-translate
+  :defer t
   :init
   ;; (setq immersive-translate-backend 'baidu
   ;;       immersive-translate-baidu-appid "20240604002069851")

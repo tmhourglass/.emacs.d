@@ -109,24 +109,27 @@
 ;; ═══════════════════════════════════════════
 (add-hook 'after-init-hook
           (lambda ()
-            (require 'init-org-core)
-            (require 'init-org-agenda)
-            (require 'init-org-roam)
-            (require 'init-org-export)
-            (require 'init-org-appearance)
-            (require 'init-journal)
             (require 'init-lsp)
             (require 'init-lisp)
             (require 'init-python)
             (require 'init-programming)
-            (require 'init-syntaxcheck)
             (require 'init-ctags)))
+
+;; Org 系列：延迟到第一次打开 .org 文件或调用 org 命令时加载（节省 ~1.1s）
+(with-eval-after-load 'org
+  (require 'init-org-core)
+  (require 'init-org-agenda)
+  (require 'init-org-roam)
+  (require 'init-org-export)
+  (require 'init-org-appearance)
+  (require 'init-journal))
 
 ;; ═══════════════════════════════════════════
 ;; 第5层：非关键模块（idle-timer 后台加载）
 ;; ═══════════════════════════════════════════
 (run-with-idle-timer 2 nil
                      (lambda ()
+                       (require 'init-syntaxcheck)
                        (require 'init-git)
                        (require 'init-tabspace)
                        (require 'init-dired)
@@ -140,5 +143,6 @@
                                             (lambda ()
                                               (require 'init-aidermacs)
                                               (require 'init-gptel)))))
+
 
 ;;; init.el ends here

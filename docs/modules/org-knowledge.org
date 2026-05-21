@@ -1,0 +1,414 @@
+#+title: Org、Journal 与知识管理说明
+
+* 范围
+这份文档对应当前仓库中与 Org 知识管理相关的模块：
+
+- =lisp/init-org.el=
+- =lisp/init-journal.el=
+
+目标是说明：
+
+- 当前 Org 工作流能做什么
+- 主要入口和按键有哪些
+- 数据默认存放在哪里
+- 哪些能力已经比较稳定，哪些部分后续值得拆分
+
+* 当前目录与数据组织
+当前配置里，Org 的基础目录常量主要来自：
+
+- =org-directory= => =~/org-notes/=
+- agenda 相关目录 => =~/org-notes/agenda=
+- roam 目录 => =~/org-notes/roam=
+- journal 目录 => =~/Documents/journal/=
+
+当前 =org-agenda-files= 会显式包含：
+
+- =gtd.org=
+- =journal.org=
+- =all-posts.org=
+- =work.org=
+- =notes.org=
+
+这些文件位于 =org-agenda-dir= 下。
+
+** 目录职责约定
+按当前配置的写法，可以把几个主要目录理解为：
+
+- =~/org-notes/=
+  - 主 Org 根目录
+- =~/org-notes/agenda/=
+  - GTD、工作、博客索引、普通笔记等 agenda 文件主目录
+- =~/org-notes/roam/=
+  - Roam 笔记库
+- =~/Documents/journal/=
+  - 独立的按月 journal 目录
+
+这说明当前配置事实上已经形成了“主任务系统”和“Roam 笔记库”分离的结构：
+
+- agenda 目录偏向任务、工作、普通记录、博客条目入口
+- roam 目录偏向知识节点、文章/书籍/参考资料等长期笔记
+- journal 目录偏向按日期记录
+
+** agenda 文件职责
+根据当前变量命名和 capture 目标，几个核心 agenda 文件大致承担这些职责：
+
+- =gtd.org=
+  - 主任务入口，尤其是 =Workspace= 标题下的 TODO
+- =notes.org=
+  - 快速笔记、Blog Ideas、Inbox、Web 收集等杂项信息
+- =work.org=
+  - 工作相关任务
+- =journal.org=
+  - agenda 视角下的 journal 文件入口
+- =all-posts.org=
+  - Hugo/博客文章条目入口
+- =snippet.org=
+  - 代码片段收集
+
+说明：
+
+- 这些职责并不是通过单独文档声明出来的，而是隐含在 capture 模板目标里
+- 现在把它写清楚，后面重构时就不会把“文件存在”和“文件承担的角色”混为一谈
+
+* 当前 Org 核心行为
+当前 Org 基础体验包括：
+
+- 启用缩进视图
+- 强调标记高亮和隐藏
+- 行内图片自动显示
+- 自定义折叠符号
+- 任务完成时间记录
+- Agenda 加速相关设置
+- =org-habit=
+- =org-crypt=
+- 中英文字体与排版兼容调整
+
+另外，=RET= 的行为被重写过，用来兼顾：
+
+- 标题
+- 列表
+- 表格
+- 链接
+- 普通换行
+
+这属于当前配置的“核心个性化行为”之一，后续重构时要重点保留。
+
+* Agenda / GTD
+当前 Agenda 相关能力包括：
+
+- 日视图 Agenda
+- 任务状态流转
+- stuck project 检测
+- effort 字段支持
+- =org-super-agenda= 分组
+- =org-pomodoro= 番茄钟
+
+当前 TODO 关键字大致分为两组：
+
+- 主线：=TODO=、=STARTED=、=DONE=
+- 辅助：=WAITING=、=SOMEDAY=、=CANCELLED=、=MEETING=、=PHONE=
+
+Agenda 体验增强：
+
+- =org-super-agenda= 对任务进行分组
+- 重要、快速任务、下一步任务、未来计划等会被单独归类
+- =P= 在 agenda buffer 中可触发 =org-pomodoro=
+
+常用入口：
+
+- =C-c a=：打开 agenda
+- =SPC o c=：org-capture
+- =SPC m p= 或 Org major leader 下的 =p=：=org-pomodoro=
+
+* Capture
+当前配置里已经定义了 =org-capture-templates=，并且：
+
+- 支持常规捕获
+- 支持 journal 集成
+- 存在 Slipbox / Roam 风格的捕获思路
+
+高频入口：
+
+- =C-c r=：=org-capture=
+- =SPC o c=：=org-capture=
+
+说明：
+
+- capture 模板目前散落在 =init-org.el= 和 =init-journal.el= 中
+- 后续重构时很适合抽成独立的 capture 模块
+
+** 当前 capture 模板一览
+当前主 capture 模板包括：
+
+- =t= Todo
+  - 目标：=gtd.org= 的 =Workspace=
+  - 用途：通用任务
+- =n= notes
+  - 目标：=notes.org= 的 =Quick notes=
+  - 用途：快速记录
+- =b= Blog Ideas
+  - 目标：=notes.org= 的 =Blog Ideas=
+  - 用途：博客想法
+- =s= Slipbox
+  - 目标：=~/org-notes/roam/inbox.org=
+  - 用途：先收进 Roam inbox 的短笔记
+- =S= Code Snippet
+  - 目标：=snippet.org=
+  - 用途：记录带语言头的代码片段
+- =w= work
+  - 目标：=work.org= 的 =Work=
+  - 用途：工作任务
+- =x= Web Collections
+  - 目标：=notes.org= 的 =Web=
+  - 用途：网页摘录、收藏
+- =p= Protocol
+  - 目标：=notes.org= 的 =Inbox=
+  - 用途：协议捕获、引用来源
+- =L= Protocol Link
+  - 目标：=notes.org= 的 =Inbox=
+  - 用途：保存链接
+- =c= Chrome
+  - 目标：=notes.org= 的 =Quick notes=
+  - 用途：抓当前 Chrome 标签页并转成待办
+- =l= links
+  - 目标：=notes.org= 的 =Quick notes=
+  - 用途：带来源链接的普通收集
+- =h= Hugo post
+  - 目标：=all-posts.org= 的 =Blog Ideas=
+  - 用途：创建 Hugo 文章条目
+
+** capture 模板的隐含约定
+从当前模板可以看出几个重要约定：
+
+- 普通任务默认进 =gtd.org=
+- 工作任务单独进 =work.org=
+- 临时笔记和网页收集主要进 =notes.org=
+- 偏知识卡片的短记录先进 Roam inbox
+- 博客文章既有“想法记录”，也有“Hugo 文章草稿入口”
+- 代码片段有单独文件，不混在普通笔记里
+
+这其实已经是一套比较完整的信息分流策略。
+
+* Org Roam
+当前配置启用了 =org-roam=，目录为：
+
+- =~/org-notes/roam=
+
+当前 Roam 能力包括：
+
+- 查找节点
+- 新建节点
+- 插入节点引用
+- 随机节点
+- dailies
+- alias / tag 管理
+- 提取 subtree 为 roam note
+- backlinks / forward links 搜索
+- 图谱与 UI
+
+当前对 Roam 做过一些定制：
+
+- 节点显示模板会附带类型与 tag
+- 根据文件所在目录推导 =node type=
+- 打开数据库自动同步
+- dailies 目录为 =daily/=
+- 定义了立即插入节点的辅助函数
+- 定义了基于 tag 过滤节点、刷新 agenda 列表的辅助函数
+
+当前 capture 模板分为几类：
+
+- =m=：main
+- =r=：reference
+- =a=：article
+- =b=：book
+
+常用入口：
+
+- =SPC o r=：=org-roam-node-find=
+- =C-c n f=：查找 Roam 节点
+- =C-c n c=：创建节点
+- =C-c n i=：插入节点
+- =C-c n I=：立即插入节点
+- =C-c n j=：今天的 dailies
+- =C-c n e=：查看 forward links
+- =C-c n b=：查看 backlinks
+- =C-c n s=：搜索 Roam
+
+说明：
+
+- 当前 Roam 已经是一个完整工作流，而不只是“装了包”
+- 这一块后续重构时适合单独切出，不要继续挤在一个超大的 =init-org.el= 里
+
+** 当前 Roam 模板约定
+当前 Roam capture 模板分为：
+
+- =m= main
+  - 路径：=main/${slug}.org=
+  - 用途：主笔记/通用笔记
+- =r= reference
+  - 路径：=reference/${title}.org=
+  - 用途：参考资料
+- =a= article
+  - 路径：=articles/${title}.org=
+  - 用途：文章类笔记
+  - 自动带 =:article:= tag
+- =b= book
+  - 路径：=books/${title}.org=
+  - 用途：书籍类笔记
+  - 自动带 =:book:= tag
+
+** Roam 目录设计反映的结构
+这套模板反映出当前 Roam 并不是“所有节点都扔在一个目录里”，而是已经按类型分层：
+
+- =main/= 偏核心/通用节点
+- =reference/= 偏资料型节点
+- =articles/= 偏文章型节点
+- =books/= 偏书籍型节点
+- =daily/= 偏每日记录
+
+这类目录语义非常适合作为后续重构时的保留约定。
+
+* Org Journal
+当前 Journal 使用 =org-journal=，特征如下：
+
+- 按月存储
+- 文件名格式：=%Y-%m.org=
+- 默认目录：=~/Documents/journal/=
+- 条目标题按日期生成
+- 开启了搜索
+- 搜索后端使用 =rg=
+- 可通过 calendar 选日期写日记
+
+当前还补了一些个人函数：
+
+- 插入固定的日记模板
+- 打开本月日记
+- 打开上月日记
+- 每周自动提示写周回顾
+- 可选的条目加密/解密
+
+常用入口：
+
+- =C-c j n=：写今天的日记
+- =C-c j d=：按指定日期写日记
+- =C-c j s=：搜索日记
+- =C-c j c=：打开日历
+- =C-c j o=：打开当前日记文件
+- =C-c j m=：打开本月日记
+- =C-c j l=：打开上月日记
+
+说明：
+
+- Journal 目录与主 Org 目录是分开的
+- 但 journal 同时被集成进 agenda 和 capture 工作流里
+
+** Journal 当前职责边界
+从现有配置来看，Journal 和 Roam、agenda 文件各自偏向：
+
+- Journal：按日期线性记录
+- Roam：长期知识节点
+- agenda 文件：任务、工作、收件箱、博客入口
+
+这个边界目前是合理的，后续重构时最好保留，而不是重新把三者混到一起。
+
+* 导出与发布
+当前 Org 相关导出能力包括：
+
+- Markdown 导出
+- Hugo 导出
+- 适配中文段落的 hugo 导出修正
+- LaTeX / PDF 导出
+- 代码块导出
+
+当前已经配置：
+
+- =ox-hugo=
+- =ox-gfm=
+- =ox-md=
+- 中文 PDF 导出参数
+
+说明：
+
+- 这部分功能和 Org core 混在一起，后续很适合独立成 =org-export= 模块
+
+* 代码块与 Babel
+当前 =org-babel= 已启用多种语言：
+
+- shell
+- js
+- latex
+- python
+- emacs-lisp
+- C
+- perl
+- ruby
+- dot
+- plantuml
+- ditaa
+
+此外还对：
+
+- C/C++ 执行参数
+- Python 命令
+- org source block 中配合 =eglot=
+
+做过定制。
+
+这意味着当前 Org 不只是笔记工具，也承担了相当一部分 literate / executable notes 的职责。
+
+* 展示与外观
+当前 Org 外观相关增强包括：
+
+- =org-superstar=
+- =toc-org=
+- =org-appear=
+- =evil-org=
+- =org-present=
+
+具体体验：
+
+- 列表和 TODO 外观增强
+- 自动 TOC
+- 进入插入态时显示强调标记
+- 在 Org 中更贴近 Evil 习惯
+- 可用 =org-present= 做演示
+
+* 图片与附件
+当前图片相关增强使用：
+
+- =org-download=
+
+支持：
+
+- 从剪贴板截图插入
+- Dired 中启用下载辅助
+- 图片默认放在当前文档下的 =./img=
+
+常用入口：
+
+- Org major leader 中：
+  - =dc=：=org-download-clipboard=
+  - =ds=：=org-download-screenshot=
+
+* 当前适合作为重构边界的拆分方式
+如果后续对 Org 进行模块化，当前最自然的拆分方式是：
+
+- Org core
+- agenda / GTD
+- capture
+- roam
+- journal
+- export / publish
+- present / appearance
+- babel / code blocks
+
+这比继续把所有行为堆在一个 =init-org.el= 中更容易维护。
+
+* 建议继续补充的内容
+如果后面还要把 Org 文档继续补细，最值得继续补的是：
+
+- 每个 agenda 文件内部预期有哪些 headline
+- 现有 =org-capture-templates= 实际使用频率
+- Roam 节点命名与 tag 约定
+- 博客发布链路
+- journal 模板与 weekly review 的使用方式

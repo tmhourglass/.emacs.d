@@ -13,11 +13,14 @@
   :init
   :hook (after-init . window-numbering-mode))
 
-(use-package es-windows)
+(use-package es-windows
+  :defer t)
 
-(use-package buffer-move)
+(use-package buffer-move
+  :defer t)
 
 (use-package resize-window
+  :defer t
   :init
   (defvar resize-window-dispatch-alist
     '((?n resize-window--enlarge-down " Resize - Expand down" t)

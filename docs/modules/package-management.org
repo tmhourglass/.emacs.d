@@ -1,0 +1,156 @@
+#+title: 包管理说明
+
+* 目的
+这份文档专门说明当前仓库的 Borg 包管理与维护方式，重点是“怎么初始化、怎么更新、怎么重建、怎么排查问题”。
+
+当前这套方案的主线是：
+
+- =borg=
+- =git submodule=
+- =use-package=
+
+也就是说，这个仓库并不是“启动时在线装包”的思路，而是：
+
+- 包源码放在 =lib/=
+- 版本通过 Git 显式固定
+- 配置通过 =use-package= 组织
+
+* 基线与目录
+** 当前基线
+当前仓库以 Borg 作为包管理基线，README 中记录的维护偏好也是“保持现有使用方式不变，先收敛结构，再逐步优化实现”。
+
+** 关键文件与目录
+- =init.el=
+  - 启动期加载 Borg，并执行 =borg-initialize=
+- =.gitmodules=
+  - 记录 submodule 源、Borg 元信息、特殊编译设置等
+- =lib/=
+  - Borg drones 与本地包源码目录
+- =elpa/=
+  - 当前仍然存在，但不是主要的“包版本事实来源”
+- =Makefile=
+  - 含 Borg bootstrap、build、profile 等入口
+
+* 初始化
+** 初始化路径
+在 =init.el= 里，包管理相关流程是：
+
+1. 把 =lib/borg= 加入 =load-path=
+2. =require 'borg=
+3. 调用 =borg-initialize=
+4. 初始化 =use-package=
+
+这意味着在当前架构里，Borg 是绝对优先的包管理基线。
+
+** 首次拉起
+典型初始化顺序是：
+
+1. clone 仓库
+2. =make bootstrap-borg=
+3. =make bootstrap=
+4. 如有需要，查看 =git submodule status= 的输出，确认哪些子模块没有正常签出或克隆
+
+如果是从零开始理解 Borg 的初始化，可以先看 Borg 官方文档，再结合本仓库的 =Makefile= 和 =.gitmodules=。
+
+* 日常维护
+** 常见维护动作
+- 通过 submodule 固定包版本
+- 更新包后按需重编译 drones
+- 根据需要更新 autoloads、texinfo 和 info
+- 在有问题时优先用 benchmark / profile 先定位，再改代码
+
+** 常用命令
+- =make bootstrap-borg=
+- =make bootstrap=
+- =make build=
+- =make clean=
+- =make help=
+- =make profile=
+- =git submodule update --init ./lib/<package-name>=
+- =git submodule foreach git pull=
+- =epkg-update=
+
+** 更新 submodule 的推荐顺序
+1. 查看哪些 submodule 有更新
+2. 进入目标子模块检查提交
+3. 拉取需要的更新
+4. 重新构建 drones
+5. 若影响到依赖，再补齐依赖并重新构建
+6. 确认没问题后再提交相关 submodule 变更
+
+* 同化与构建
+** 同化流程
+=borg-assimilate= 用于把第三方包纳入 Borg 管理，流程大意是：
+
+- 将包添加为 submodule
+- 尝试构建对应 drone
+- 结合元数据决定 url、依赖和后续构建步骤
+
+相关命令：
+
+- =borg-initialize=：初始化同化包
+- =borg-activate=：初始化同化及非同化包
+- =borg-assimilate=：同化三方包
+- =borg-clone=：只克隆，不同化
+- =borg-remove=：删除克隆或同化的包
+
+** 构建与重建
+- =borg-build=：重新构建失败的无人机，直到成功
+- =make build=：重新构建所有
+- =borg-compile=：编译无人机
+- =borg-update-autoloads=：更新无人机的 autoloads
+- =borg-maketexi=：从 Org 生成 Texinfo
+- =borg-makeinfo=：生成 info 手册及索引
+- =borg-batch-rebuild=：按字母顺序批量重建全部同化无人机
+- =borg-batch-rebuild-init=：批量重建 init 相关内容
+
+** 依赖检查
+同化前建议先用 =epkg-describe-package= 看包信息和依赖，尽量在构建前把明显缺失的依赖补齐。
+
+* 单包处理
+** 只处理一个 drones
+- 只克隆：=borg-clone=
+- 只同化：=borg-assimilate=
+- 只重建：=make lib/DRONE= 或对应的 =make build/DRONE=、=make native/DRONE=
+- 只移除：=borg-remove=
+
+** 包更新后的典型动作
+1. 更新对应 submodule
+2. 重新构建该包的 drone
+3. 检查是否引入新依赖
+4. 必要时补齐依赖后再次构建
+5. 确认无误后提交相关变更
+
+* Makefile
+Makefile 里保留了 Borg 相关的批量入口，也允许按组定制命令，例如 =make profile=。
+
+建议把它当作这套维护方式的“批处理入口层”来使用，而不是手写一堆零散 shell 命令。
+
+* 注意事项
+1. =init.el= 里不要在 Borg 关键路径上用 =with-temp-message=，否则 =make bootstrap= 时可能看不到最终状态。
+2. 有些包位于子目录中，例如 =vertico=，需要在 =.gitmodules= 或 Borg 元信息里补充合适的 =load-path= / =no-byte-compile= 设置。
+3. 当前启动时间仍然偏长，常见排查方式是先用 benchmark / profile 定位热点，再考虑拆分或延迟加载。
+4. 过去曾经明显拖慢启动的一个例子是 =find-dired= 路径相关扩展，移除后启动时间有显著改善。
+5. 目录 =elpa/= 在一些场景下会被重新生成，当前并不是版本事实来源，要关注它何时出现、为何出现。
+6. 本机编译相关行为仍需结合当前 Emacs 环境确认，不能默认所有发行版都具备同样的 native-comp 条件。
+
+* 帮助与参考
+- Borg 官方文档：[[https://emacsmirror.net/manual/borg/Bootstrapping-using-a-seed.html][Bootstrapping using a seed]]
+- Borg 仓库：[[https://github.com/emacscollective/borg][emacscollective/borg]]
+- 这里仓库的协作版本：[[https://github.com/emacscollective/emacs.g][emacs.g]]
+- 各个包的 README 文档通常已经集成到 INFO，可通过 =C-h i= 搜索查看
+
+* 为什么先继续用 Borg
+后续第一阶段重构仍建议保持 =borg + submodule=，原因是：
+
+- 符合“尽量不改变现有使用方式”的目标
+- 可以把风险集中在模块入口和懒加载上
+- 避免把“包管理迁移”和“架构重构”叠在同一次改造里
+
+后续如果要继续细化包管理层，建议优先做：
+
+1. 审计 =.gitmodules=
+2. 标记当前实际使用、可选/实验、可移除候选
+3. 明确 =elpa/= 的角色
+4. 补齐“加包 / 升级 / 移除 / 重建 / 回滚”的统一说明
+5. 继续将包管理文档与功能使用文档分离

@@ -1,0 +1,216 @@
+#+title: 补全、搜索与按键体系说明
+
+* 范围
+这份文档对应当前配置中与补全、搜索、命令选择、动作扩展和按键体系相关的部分：
+
+- =lisp/init-completion.el=
+- =lisp/init-global-keys.el=
+- =lisp/init-general-keys.el=
+- 与其强相关的 =lisp/init-tools.el=
+
+* 当前补全架构
+当前补全可以分成两层：
+
+- minibuffer 补全层
+- buffer 内 completion-at-point 层
+
+minibuffer 补全主要由这些包构成：
+
+- =vertico=
+- =orderless=
+- =consult=
+- =marginalia=
+- =embark=
+- =embark-consult=
+
+buffer 内补全主要由这些包构成：
+
+- =corfu=
+- =cape=
+- =company=（主要被部分桥接逻辑使用）
+- =yasnippet-capf=
+
+* Minibuffer 补全
+** Vertico
+当前 =vertico= 负责：
+
+- 候选列表展示
+- 候选上下移动
+- 路径输入时的目录清理
+- repeat 历史
+
+常用按键：
+
+- =C-j=：下一个候选
+- =C-k=：上一个候选
+- =C-'=：快速跳转候选
+- =Backspace=：路径层级删除
+
+** Orderless
+当前 =orderless= 负责匹配策略，支持：
+
+- initialism
+- literal
+- regexp
+- flex
+
+还做了额外定制，例如：
+
+- 支持按前缀字符切换匹配模式
+- 文件扩展名匹配优化
+- 命令、变量、symbol 分类下使用更适合的 style
+
+这部分决定了“输入一串模糊关键词后为什么还能匹配得很顺”的体验。
+
+** Consult
+当前 =consult= 是搜索和候选选择的核心入口，负责：
+
+- 行内搜索
+- ripgrep 搜索
+- buffer 切换
+- recent file
+- goto line
+- xref 展示
+- bookmark
+- yank 历史
+
+高频入口：
+
+- =C-s=：=consult-line=
+- =SPC s s=：当前 buffer 搜索
+- =SPC s p=：项目全文搜索
+- =SPC b b=：切 buffer
+- =SPC f r=：最近文件
+- =SPC f d=：目录切换
+
+当前还做了这些定制：
+
+- xref 结果改为 =consult-xref=
+- 项目搜索默认不实时预览，防止预览过重
+- =register-preview= 等原生命令被替换为 consult 版本
+
+* Buffer 内补全
+** Corfu
+当前图形界面下启用 =corfu=，并且：
+
+- 自动补全默认开启
+- 延迟较低
+- 支持 popupinfo 文档弹窗
+- 支持把当前补全上下文转到 minibuffer 继续操作
+
+常用按键：
+
+- =C-j= / =C-k=：候选上下移动
+- =M-m=：转入 minibuffer 完成补全
+- =s-d=：切换 popupinfo
+- =s-p= / =s-n=：滚动 popupinfo
+
+** Cape
+当前 =cape= 补充了多种 CAPF：
+
+- file
+- dabbrev
+- keyword
+- symbol
+- abbrev
+- ispell
+- line
+- dict
+- tex
+- sgml
+
+常用入口：
+
+- =C-c p p=：completion-at-point
+- =C-c p d=：dabbrev
+- =C-c p f=：file
+- =C-c p i=：ispell
+
+** Eglot 集成
+在 =eglot-managed-mode= 中，当前会把：
+
+- =eglot-completion-at-point=
+- snippet completion
+
+组合到一起，从而让 LSP completion 与 snippet completion 共存。
+
+* Embark 与动作扩展
+当前 =embark= 提供“候选之后还能继续做什么”的能力。
+
+常用入口：
+
+- =C-;=：=embark-act=
+- =C-c C-;=：=embark-export=
+- =C-c C-e=：导出到可编辑 buffer
+- =C-h B=：查看当前 buffer 绑定
+
+当前已经对不同 target map 做了增强，例如：
+
+- identifier 上直接 =consult-ripgrep=
+- file 上直接外部打开、计算 md5 等
+
+这意味着当前补全系统并不是“只负责选中”，而是“选中后立刻接动作”。
+
+* 搜索体系
+当前搜索主要分三层：
+
+- 当前 buffer 内搜索：=consult-line=
+- 当前项目内搜索：=consult-ripgrep=
+- xref / symbol / definition / reference 相关搜索
+
+额外还有：
+
+- =consult-dir=
+- =consult-flycheck=
+- =consult-org-roam=
+
+说明：
+
+- 搜索入口已经比较统一，后续重构时应尽量保持这种统一性
+
+* 按键体系
+当前按键体系分三类：
+
+- 原生 Emacs 直接绑定
+- macOS 风格 =s-= 绑定
+- =general= 驱动的 =SPC= 菜单体系
+
+** 高频直接绑定
+- =C-s=：搜索当前 buffer
+- =M-y=：yank 历史
+- =s-x= / =s-c= / =s-v= / =s-s=
+- =s-l=：goto line
+- =s-e=：切换输入法
+- =s-d=：区域扩展入口
+
+** Leader 菜单
+当前最核心的菜单组：
+
+- =SPC f=：文件
+- =SPC b=：buffer / bookmark
+- =SPC s=：搜索
+- =SPC l=：layout / workspace
+- =SPC w=：window
+- =SPC p=：project
+- =SPC c=：code
+- =SPC t=：toggle
+- =SPC g=：git / goto
+- =SPC o=：open / org
+
+说明：
+
+- 这一层就是当前配置的“用户界面”
+- 后续即使内部重构，也应尽量保持这个入口拓扑不变
+
+* 当前值得注意的问题
+- 中文拼音搜索相关逻辑目前并非完全稳定
+- 补全与搜索相关配置跨越多个模块，后续可以适当收口
+- =general= 菜单和直接按键同时存在，文档化很重要，否则时间久了容易忘
+
+* 重构建议
+后续重构时，这一层建议尽量保持：
+
+- =consult= 作为统一搜索入口
+- =vertico + orderless= 作为 minibuffer 基线
+- =corfu + cape= 作为 buffer completion 基线
+- =SPC= 菜单结构不变

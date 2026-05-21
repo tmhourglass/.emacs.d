@@ -48,7 +48,7 @@
 ;; Prime cache before Magit refresh
 (use-package magit-prime
   :diminish
-  :hook after-init)
+  :demand t)
 
 
 ;; Show TODOs in Magit

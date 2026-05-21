@@ -18,13 +18,15 @@
 ;;         doom-themes-enable-italic t) ; if nil, italics is universally disabled
 ;;   (load-theme 'doom-one t))
 
-;; 加载默认主题
-(load-theme 'sanityinc-solarized-light t)
+;; 加载默认主题 — emacs-startup-hook 在 after-init-hook 之前、显示 scratch 之前触发
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (load-theme 'sanityinc-solarized-light t)))
 
 ;; macos中设置标题栏匹配当前系统主题
 (use-package ns-auto-titlebar
   :when sys/macp
-  :config (ns-auto-titlebar-mode))
+  :hook (after-init . ns-auto-titlebar-mode))
 
 
 
@@ -60,6 +62,7 @@
 
 ;; Icons
 (use-package nerd-icons
+  :defer t
   :config
   (when (and (display-graphic-p)
              (not (font-installed-p nerd-icons-font-family)))
@@ -110,7 +113,8 @@
 
 ;; Use fixed pitch where it's sensible
 (use-package mixed-pitch
-  :diminish)
+  :diminish
+  :defer t)
 
 ;; Display ugly ^L page breaks as tidy horizontal lines
 (use-package page-break-lines
@@ -127,6 +131,7 @@
 
 
 (use-package visual-fill-column
+  :defer t
   :init
   ;; Configure fill width
   (setq visual-fill-column-width 110

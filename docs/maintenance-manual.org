@@ -1,0 +1,223 @@
+#+title: 维护手册
+#+subtitle: Borg 包管理、启动结构与日常维护
+
+* 目录结构
+
+```
+.emacs.d/
+├── init.el                 # 主入口，分层加载
+├── early-init.el           # 早期初始化（GUI 裁剪、禁用 package.el）
+├── lisp/                   # 配置文件目录
+│   ├── init-const.el       # 常量定义
+│   ├── init-funcs.el       # 通用辅助函数
+│   ├── init-funcs-org.el   # Org 辅助函数
+│   ├── init-funcs-edit.el  # 编辑辅助函数
+│   ├── init-generic.el     # 全局默认变量与行为
+│   ├── init-basic.el       # 基础设施
+│   ├── init-evil.el        # Evil 编辑模式
+│   ├── init-completion.el  # 补全系统
+│   ├── init-font.el        # 字体配置
+│   ├── init-ui.el          # UI 与主题
+│   ├── init-window.el      # 窗口管理
+│   ├── init-dashboard.el   # 启动面板
+│   ├── init-theme-switch.el# 主题切换
+│   ├── init-global-keys.el # 全局快捷键
+│   ├── init-general-keys.el# SPC leader 按键
+│   ├── init-tools.el       # 工具集
+│   ├── init-snippets.el    # 代码片段
+│   ├── init-org-*.el       # Org 模块（5 个文件）
+│   ├── init-journal.el     # 日记
+│   ├── init-lsp.el         # LSP / Eglot
+│   ├── init-python.el      # Python
+│   ├── init-programming.el # 通用编程
+│   ├── init-lisp.el        # Lisp
+│   ├── init-syntaxcheck.el # 语法检查
+│   ├── init-ctags.el       # 代码索引
+│   ├── init-git.el         # Git / Magit
+│   ├── init-dired.el       # 文件管理
+│   ├── init-write.el       # 写作
+│   ├── init-read.el        # 阅读
+│   ├── init-dict.el        # 词典翻译
+│   ├── init-rime.el        # Rime 输入法
+│   └── init-aidermacs.el   # AI 助手
+├── lib/                    # Borg 管理的包（git submodule）
+├── etc/                    # no-littering 管理的配置数据
+├── elpa/                   # package.el 缓存（非主包管理）
+├── docs/                   # 文档
+├── Makefile                # 批处理入口
+├── .gitmodules             # submodule 定义
+└── profile-dotemacs.el     # 启动性能分析
+```
+
+* 启动分层结构
+
+init.el 采用 5 层加载策略：
+
+| 层    | 加载方式       | 内容                                       |
+|-------|--------------|-------------------------------------------|
+| 0     | 同步 require  | const, funcs, funcs-org, funcs-edit, generic |
+| 1     | 同步 require  | basic, evil, completion                    |
+| 2     | 同步 require  | font, ui, window, dashboard, theme-switch   |
+| 3     | 同步 require  | global-keys, general-keys, tools, snippets  |
+| 4     | after-init-hook | lsp, lisp, python, programming, ctags     |
+| 5     | idle-timer 2s | syntaxcheck, git, dired, write, rime, read, dict, translate |
+| 6     | idle-timer 5s | aidermacs, gptel (AI 模块)                  |
+| —     | with-eval-after-load 'org | org-core, agenda, roam, export, appearance, journal |
+
+**核心原则**：
+- =use-package-always-defer t= 全局生效，所有包默认延迟加载
+- 需要即加载的包用 =:demand t= 或 =:defer nil=
+- 批量绑定用 =:commands= / =:bind= / =:hook= / =:mode= 作为触发点
+- Org 系列用 =with-eval-after-load 'org= 统一延迟到首次使用
+
+* Borg 包管理
+
+** 核心概念
+
+Borg 使用 =git submodule= 管理所有 Emacs 包，包源码存放在 =lib/= 下，版本通过 Git 提交固定。
+
+与 package.el 的区别：
+- Borg：源码在 =lib/=，版本 Git 控制，不依赖 ELPA 在线装包
+- package.el：包在 =elpa/=，启动时可能在线下载
+
+** 日常命令
+
+| 命令                                   | 说明                 |
+|----------------------------------------|---------------------|
+| =make bootstrap-borg=                  | 初始化 Borg 自身     |
+| =make bootstrap=                       | 拉取所有 submodule   |
+| =make build=                           | 重建所有包           |
+| =make profile=                         | 启动性能分析         |
+| =make help=                            | 查看可用 Make 目标   |
+
+** 添加新包
+
+在 Emacs 中：
+1. =M-x borg-assimilate= — 输入包名和 URL，Borg 自动添加为 submodule 并构建
+2. 在对应的 =lisp/init-*.el= 中添加 =use-package= 配置
+
+** 更新包
+
+#+begin_src bash
+# 拉取所有 submodule 更新
+git submodule foreach git pull
+
+# 或更新单个包
+git submodule update --remote lib/<package-name>
+
+# 重建
+make build
+#+end_src
+
+** 移除包
+
+1. =M-x borg-remove= — 选择要移除的包
+2. 从对应的 =lisp/init-*.el= 中移除 =use-package= 配置
+3. 提交变更
+
+** 包构建
+
+单个包的构建：
+#+begin_src bash
+make lib/<package-name>    # 构建指定包
+make build/<package-name>  # 同上
+make native/<package-name> # native-comp 编译
+#+end_src
+
+* use-package 规范
+
+本配置中 use-package 的使用约定：
+
+1. 所有包默认 =use-package-always-defer t=，除非加 =:demand t=
+2. 必须有显式触发点（=:commands= / =:bind= / =:hook= / =:mode= / =:defer= / =:after=），否则包永远不会加载
+3. 内置包（=emacs= 前缀已加载、=isearch= =diff-mode= 等自带 autoload）不需要显式触发
+4. Borg 管理的包不需要 =:ensure t= —— Borg 自动处理路径
+5. =:init= 中的代码总在执行，=:config= 中的代码延迟到包加载后执行
+
+** 常见陷阱**
+
+- =:after= 不是触发点，需要配合 =:defer t= 或 =:commands= / =:bind= 等
+- =:hook= 本身是触发点（包在 hook 触发时才加载）
+- =:bind= 本身是触发点（包在按键触发时才加载）
+- 给内置 Emacs Lisp 包用 =use-package= 加 =:no-require t=
+
+* 性能分析
+
+** benchmark-init
+
+启动后在 =*benchmark-init/tabulated*= buffer 中查看各模块加载耗时：
+- =M-x benchmark-init/tabulated= — 查看表格
+- =M-x benchmark-init/show-durations= — 查看排序列表
+
+** profile-dotemacs
+
+#+begin_src bash
+make profile
+#+end_src
+
+在真实 Emacs GUI 会话中运行，可以获取 init.el 各 sexp 的详细耗时。
+
+** 批处理基线
+
+#+begin_src bash
+/usr/bin/time -p emacs -Q --batch -l init.el --eval "(message \"ok\")"
+#+end_src
+
+** 当前性能数据
+
+- 批处理加载：~0.98s
+- 命令行 GUI 启动：~1s
+- Dock 图标启动：~2s（含 macOS App 启动开销，非配置问题）
+
+* elpa/ 目录说明
+
+=elpa/= 目录不是本配置的主要包管理源。它可能由 Borg 内部调用 =package-initialize= 时产生。正常情况下它应该为空或仅含 =archives/= 缓存。
+
+如果发现 =elpa/= 下出现包文件：
+- 检查是否有 =use-package= 错误使用了 =:ensure t=
+- 检查 =etc/custom.el= 中是否有 =package-selected-packages= 残留
+- 删除 =elpa/= 并从 =custom.el= 中移除相关行
+
+* 常见问题
+
+** Emacs 启动慢
+
+1. =M-x benchmark-init/tabulated= 查看热点模块
+2. 检查 =*Messages*= buffer 中的 warning
+3. 运行 =make profile= 获取详细耗时
+
+** 按键不生效
+
+1. 确认包是否实际加载：=M-x describe-variable RET load-history RET=
+2. 检查 =use-package= 是否有显式触发点（=:commands= / =:bind= / =:hook= / =:mode=）
+3. =C-h k= 查看按键绑定的函数
+
+** Borg submodule 状态异常
+
+#+begin_src bash
+git submodule status          # 查看所有 submodule 状态
+git submodule update --init   # 初始化缺失的 submodule
+#+end_src
+
+** Rime 输入法不工作
+
+1. 确认 =rime-librime-root= 路径正确（=ls /opt/homebrew/lib/librime*=）
+2. 运行 =M-x rime-compile-module= 编译动态模块
+3. 检查 Squirrel 用户数据目录：=~/Library/Rime=
+
+** Emacs 30 Dired 排序失效
+
+Emacs 30 对 ls 的 =--group-directories-first= 支持有变化，使用：
+#+begin_src elisp
+(setq insert-directory-program "gls")  ; 需 coreutils
+#+end_src
+
+* 环境要求
+
+- Emacs >= 30.1
+- macOS（Apple Silicon）
+- Homebrew 安装的依赖：
+  - =librime=（Rime 输入法）
+  - =coreutils=（Dired 排序，可选）
+  - =ripgrep=、=fd=（搜索）
+- Squirrel（鼠须管）输入法（Rime 共享用户数据）

@@ -27,12 +27,14 @@
 
 
 ;; Emacs 的交互式宏扩展器
-(use-package macrostep)
+(use-package macrostep
+  :defer t)
 
 
 ;; 更好的 Emacs *帮助* 缓冲区
 ;; 快捷键统一维护到keybindings中
-(use-package helpful)
+(use-package helpful
+  :defer t)
 
 
 ;; (use-package help

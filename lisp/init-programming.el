@@ -53,6 +53,7 @@
 ;;; Tree-sitter support
 ;; https://git.savannah.gnu.org/cgit/emacs.git/tree/admin/notes/tree-sitter/starter-guide?h=emacs-29
 (use-package treesit
+  :demand t
   :when (and (fboundp 'treesit-available-p)
              (treesit-available-p))
   :custom
@@ -79,6 +80,7 @@
 
 ;; 格式化命令
 (use-package reformatter
+  :defer t
   :config
   (reformatter-define black :program "black" :args '("-") :group 'reformatter)
   (reformatter-define blue :program "blue" :args '("-") :group 'reformatter)
@@ -99,7 +101,8 @@
 
 ;; 编码过程中可能用到的几个模式，根据使用情况添加，没用到的去掉，减少加载
 
-(use-package yaml-mode)
+(use-package yaml-mode
+  :defer t)
 
 
 (use-package json-mode
@@ -142,11 +145,13 @@
 
 
 ;; Emmet
-(use-package emmet-mode)
+(use-package emmet-mode
+  :defer t)
 
 
 ;; conda / pythonic
 (use-package conda
+  :defer t
   :init
   (setq conda-anaconda-home "/opt/anaconda3")
   :config

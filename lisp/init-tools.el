@@ -10,6 +10,7 @@
 
 ;; 用于高亮
 (use-package symbol-overlay
+  :defer t
   :config
   (define-key symbol-overlay-map (kbd "h") 'nil))
 
@@ -24,10 +25,12 @@
     (define-key global-map (kbd "C-c C-r") 'vr/replace)
     (define-key global-map (kbd "C-c C-q") 'vr/query-replace)))
 
-(use-package discover-my-major)
+(use-package discover-my-major
+  :defer t)
 
 ;; 多点编辑
 (use-package iedit
+  :defer t
   :init
   (setq iedit-toggle-key-default nil)
   :config
@@ -54,6 +57,7 @@
 ;; 这个也可用于多点编辑，有多种按键 s-d或SPC v 或C-=
 ;; 进入该模式时，按e即可进入iedit-mode
 (use-package expand-region
+  :defer t
   :config
   (defun my-expand-region-advice (orig-func &rest args)
     "增强 expand-region 的功能，添加自定义绑定。"
@@ -144,7 +148,8 @@
   :commands (uuidgen))
 
 ;; 链接上进行相关操作，如打开等
-(use-package link-hint)
+(use-package link-hint
+  :defer t)
 
 (use-package keycast
   :commands (toggle-keycast)
@@ -159,7 +164,8 @@
       (add-hook 'pre-command-hook 'keycast--update t)
       (message "Keycast ON"))))
 
-(use-package sudo-edit)
+(use-package sudo-edit
+  :defer t)
 
 ;; todo-borg
 ;; (use-package vterm)

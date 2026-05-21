@@ -1,0 +1,245 @@
+#+title: 编程支持与外部依赖说明
+
+* 范围
+这份文档对应当前仓库里与编程体验最直接相关的模块：
+
+- =lisp/init-lsp.el=
+- =lisp/init-programming.el=
+- =lisp/init-python.el=
+- =lisp/init-lisp.el=
+- =lisp/init-syntaxcheck.el=
+- =lisp/init-ctags.el=
+
+同时也记录这些能力所依赖的外部程序。
+
+* 当前编程支持的总体结构
+当前编程体验可以分成几层：
+
+- 导航与符号跳转
+- LSP 与语言服务
+- 语法检查
+- 格式化
+- tree-sitter major mode 接管
+- 语言专项支持
+
+* 导航与符号跳转
+当前相关工具包括：
+
+- =xref=
+- =eglot=
+- =consult-eglot=
+- =dumb-jump=
+- =citre=
+- =breadcrumb=
+
+常用入口：
+
+- =SPC g g=：跳到定义
+- =SPC g r=：查找引用
+- =M-g s=：工作区符号
+- =M-g j=：=dumb-jump-go=
+
+说明：
+
+- 当前已经把 =xref= 展示层替换成了 =consult-xref=
+- =dumb-jump= 作为 fallback 跳转手段仍然保留
+- =citre= 提供 tag 体系支持
+
+* LSP
+当前主线使用的是 =eglot=，不是 =lsp-mode=。
+
+当前 Eglot 的典型能力包括：
+
+- code actions
+- rename
+- organize imports
+- format
+- implementation 跳转
+- eldoc 文档
+
+常用入口：
+
+- =C-c l a=：code actions
+- =C-c l r=：rename
+- =C-c l o=：organize imports
+- =C-c l f=：format
+- =C-c l d=：eldoc
+- =s-<return>=：code actions
+
+当前还做了 Evil 相关补充绑定，例如：
+
+- =gr=：引用
+- =gR=：rename
+- =gi=：implementation
+- =ga=：code actions
+
+说明：
+
+- 这套键位和当前 Evil 导航习惯绑定较深，后续最好保持
+
+* Tree-sitter
+当前启用了：
+
+- =treesit-auto=
+- =treesit=
+
+作用：
+
+- 自动尝试把传统 major mode remap 到 tree-sitter major mode
+- 为多种语言准备 grammar 源
+
+受影响的语言包括：
+
+- C / C++
+- Java
+- JavaScript
+- JSON
+- Python
+- Ruby
+- Bash
+- CSS
+- YAML
+- TS / TSX
+
+说明：
+
+- 当前这部分已经算是“全局编程行为”的一部分
+- 但因为 grammar 安装和初始化会带来一定成本，后续可能要继续评估它对启动的影响
+
+* 格式化
+当前格式化能力分两层：
+
+- =reformatter=
+- =apheleia=
+
+当前已经定义的 formatter 包括：
+
+- =black=
+- =blue=
+- =js-beautify=
+- =html-beautify=
+- =css-beautify=
+- =hindent=
+- =ormolu=
+
+高频入口：
+
+- =C-c f=：=apheleia-format-buffer=
+
+说明：
+
+- =apheleia= 当前是统一入口
+- 某些语言还做了 mode 到 formatter 流水线的对应，例如 Python
+
+* 语法检查
+当前使用两套机制：
+
+- =flycheck=
+- =flymake=
+
+其中：
+
+- =flycheck= 是主要可见入口
+- =flymake-posframe= 负责 Flymake 的浮动展示
+
+常用入口：
+
+- =SPC t s=：切换 =flycheck-mode=
+- =C-c t f=：切换 =flycheck-mode=
+
+当前还对：
+
+- JavaScript / ESLint
+- JSON / jsonlint
+
+做了额外 checker 定义。
+
+* 语言专项支持
+** Python
+当前 Python 支持包括：
+
+- 默认解释器 =python3=
+- =eglot= 集成
+- =pyvenv=
+- =auto-virtualenvwrapper=
+- 可配合 =conda=
+
+说明：
+
+- Python 相关环境管理能力较多，但分散在 =init-programming.el= 和 =init-python.el= 中
+
+** Lisp
+当前 Lisp 支持包括：
+
+- =lispy=
+- =lispyville=
+- =macrostep=
+- =helpful=
+- =elisp-demos=
+- =highlight-quoted=
+
+这部分主要用于 Emacs Lisp / Lisp 风格代码的结构化编辑和帮助查看。
+
+** Web / JSON / YAML
+当前相关支持包括：
+
+- =web-mode=
+- =emmet-mode=
+- =json-mode=
+- =yaml-mode=
+- =dtrt-indent=
+
+说明：
+
+- 这些功能目前主要集中在 =init-programming.el= 中
+
+* Org 中的编程支持
+当前还支持在 Org 源码块中配合 =eglot=，并启用了多语言 =org-babel=。
+
+这说明当前编程体验不仅发生在普通源码文件中，也发生在 Org 笔记里。
+
+* 外部依赖
+当前编程支持常见依赖包括：
+
+- =python3=
+- =black=
+- =blue=
+- =js-beautify=
+- =html-beautify=
+- =css-beautify=
+- =hindent=
+- =ormolu=
+- =eslint=
+- =jsonlint=
+- =ctags=
+- tree-sitter grammar
+
+可选但常见的配套环境：
+
+- Python 虚拟环境目录
+- Conda
+- 各语言的 LSP server
+
+说明：
+
+- 如果某个模式能打开，但补全、跳转、格式化或检查失效，优先应检查外部依赖是否存在
+
+* 当前结构上的问题
+当前最明显的问题有两个：
+
+- =init-programming.el= 职责混合过多
+- 编程相关外部依赖只存在于注释和经验中，还没有统一的依赖清单
+
+这也是为什么需要单独写这份文档。
+
+* 后续重构建议
+后续可以考虑将编程支持拆为：
+
+- 基础编程行为
+- LSP / navigation
+- syntax check
+- formatting
+- language modules
+- external dependencies notes
+
+这样比把所有语言和工具都塞进同一个文件里更容易维护。

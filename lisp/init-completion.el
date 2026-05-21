@@ -9,7 +9,8 @@
 ;;; Code:
 
 
-(use-package company)
+(use-package company
+  :defer t)
 
 (defun nasy/orderless-dispatch-flex-first (_pattern index _total)
   "orderless-flex for corfu."

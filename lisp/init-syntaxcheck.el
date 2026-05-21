@@ -9,7 +9,8 @@
 ;;; Code:
 
 (use-package flymake
-  :ensure nil)
+  :ensure nil
+  :defer t)
 
 (use-package flycheck
   :commands (flycheck-mode)

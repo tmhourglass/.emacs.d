@@ -47,7 +47,7 @@
 ;; 另外也支持文件路径显示：breadcrumb--header-line 在最上面有一行导航栏显示
 ;; 同样可显示文件中包的路径层级  -- 显示更丰富的路径
 (use-package breadcrumb
-  :config (breadcrumb-mode))
+  :hook (after-init . breadcrumb-mode))
 
 
 ;; org代码块中支持的语言

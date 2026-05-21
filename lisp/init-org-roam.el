@@ -120,8 +120,8 @@
       ("C-c n s" . consult-org-roam-search))
 
     (use-package org-contrib
+      :demand t
       :init
-      :after org
       (require 'org-checklist))
 
     ))
