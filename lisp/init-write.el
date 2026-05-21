@@ -11,28 +11,28 @@
 
 ;; 输入法切换 sis/rime用其一
 ;; 获取当前输入法id的方法: 在终端中切换到中文，用macism查看
-(use-package sis
-  :demand t
-  ;; :bind ("<f10>" . sis-switch)   ; s-e global keybings
-  :config
-  (add-to-list 'sis-prefix-override-keys "M-s")
-  (add-to-list 'sis-prefix-override-keys "M-g")
-  (when sys/macp
-    ;; 鼠须管 squirrel
-    (sis-ism-lazyman-config "com.apple.keylayout.ABC" "im.rime.inputmethod.Squirrel.Hans")
-    ;; 小企鹅fcitx5
-    ;; (sis-ism-lazyman-config "com.apple.keylayout.ABC" "org.fcitx.inputmethod.Fcitx5.zhHans")
-    )
-  (when (eq system-type 'gnu/linux)
-    (sis-ism-lazyman-config "1" "2" 'fcitx5))
+;; (use-package sis
+;;   :demand t
+;;   ;; :bind ("<f10>" . sis-switch)   ; s-e global keybings
+;;   :config
+;;   (add-to-list 'sis-prefix-override-keys "M-s")
+;;   (add-to-list 'sis-prefix-override-keys "M-g")
+;;   (when sys/macp
+;;     ;; 鼠须管 squirrel
+;;     (sis-ism-lazyman-config "com.apple.keylayout.ABC" "im.rime.inputmethod.Squirrel.Hans")
+;;     ;; 小企鹅fcitx5
+;;     ;; (sis-ism-lazyman-config "com.apple.keylayout.ABC" "org.fcitx.inputmethod.Fcitx5.zhHans")
+;;     )
+;;   (when (eq system-type 'gnu/linux)
+;;     (sis-ism-lazyman-config "1" "2" 'fcitx5))
 
-  ;; 默认英文的光标颜色为黑色，看不清 -- 修改
-  (setq sis-default-cursor-color "#5f9ea0")
+;;   ;; 默认英文的光标颜色为黑色，看不清 -- 修改
+;;   (setq sis-default-cursor-color "#5f9ea0")
 
-  ;; 非英文的光标颜色为桔色
-  (setq sis-other-cursor-color "orange")
-  (sis-global-cursor-color-mode t)
-  (sis-global-respect-mode t))
+;;   ;; 非英文的光标颜色为桔色
+;;   (setq sis-other-cursor-color "orange")
+;;   (sis-global-cursor-color-mode t)
+;;   (sis-global-respect-mode t))
 
 
 ;; minibuffer中s-p启用拼音搜索，退出时禁用

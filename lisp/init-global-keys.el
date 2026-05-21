@@ -63,8 +63,7 @@
 (global-set-key (kbd "C-M-\\") 'indent-region-or-buffer)
 
 ;; 输入法中英文切换
-;; (define-key global-map (kbd "s-e") 'rime-inline-ascii)
-(define-key global-map (kbd "s-e") 'sis-switch)
+(define-key global-map (kbd "s-e") 'toggle-input-method)
 
 ;; 扩展完成：可使用tab，也可使用 s-/
 ;; (global-set-key (kbd "s-/") 'hippie-expand)
