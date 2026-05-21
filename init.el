@@ -79,6 +79,8 @@
 ;; 常量及函数定义
 (require 'init-const)
 (require 'init-funcs)
+(require 'init-funcs-org)
+(require 'init-funcs-edit)
 
 ;; emacs内置变量配置，不依赖于package
 (require 'init-generic)

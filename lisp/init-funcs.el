@@ -103,85 +103,6 @@ Same as `replace-string C-q C-m RET RET'."
 
 
 
-;; 缩进整个buffer
-(defun indent-buffer()
-  (interactive)
-  (indent-region (point-min) (point-max)))
-
-;; 若选中区域，则对区域缩进，否则对整个buffer缩进
-(defun indent-region-or-buffer()
-  (interactive)
-  (save-excursion
-    (if (region-active-p)
-        (progn
-          (indent-region (region-beginning) (region-end))
-          (message "Indent selected region."))
-      (progn
-        (indent-buffer)
-        (message "Indent buffer.")))))
-
-
-
-(defun dired-open-term ()
-  "Open an `ansi-term' that corresponds to current directory."
-  (interactive)
-  (let* ((current-dir (dired-current-directory))
-         (buffer (if (get-buffer "*zshell*")
-                     (switch-to-buffer "*zshell*")
-                   (ansi-term "/bin/zsh" "zshell")))
-         (proc (get-buffer-process buffer)))
-    (term-send-string
-     proc
-     (if (file-remote-p current-dir)
-         (let ((v (tramp-dissect-file-name current-dir t)))
-           (format "ssh %s@%s\n"
-                   (aref v 1) (aref v 2)))
-       (format "cd '%s'\n" current-dir)))))
-
-(defun dired-copy-file-here (file)
-  (interactive "fCopy file: ")
-  (copy-file file default-directory))
-
-(defun my-dired-find-file ()
-  "Open buffer in another window"
-  (interactive)
-  (let ((filename (dired-get-filename nil t)))
-    (if (car (file-attributes filename))
-        (dired-find-alternate-file)
-      (dired-find-file-other-window))))
-
-
-(defun zilongshanren/dired-do-command (command)
-  "Run COMMAND on marked files. Any files not already open will be opened.
-After this command has been run, any buffers it's modified will remain
-open and unsaved."
-  (interactive "CRun on marked files M-x ")
-  (save-window-excursion
-    (mapc (lambda (filename)
-            (find-file filename)
-            (call-interactively command))
-          (dired-get-marked-files))))
-
-
-(defmacro dakra-define-up/downcase-dwim (case)
-  (let ((func (intern (concat "dakra-" case "-dwim")))
-        (doc (format "Like `%s-dwim' but %s from beginning when no region is active." case case))
-        (case-region (intern (concat case "-region")))
-        (case-word (intern (concat case "-word"))))
-    `(defun ,func (arg)
-       ,doc
-       (interactive "*p")
-       (save-excursion
-         (if (use-region-p)
-             (,case-region (region-beginning) (region-end))
-           (beginning-of-thing 'symbol)
-           (,case-word arg))))))
-
-(dakra-define-up/downcase-dwim "upcase")
-(dakra-define-up/downcase-dwim "downcase")
-(dakra-define-up/downcase-dwim "capitalize")
-
-
 ;; 搜索当前选中的区域，否则搜索当前单词
 (defun my/consult-line (consult-line-function &rest rest)
   "Advising function around `CONSULT-LINE-FUNCTION'.
@@ -304,39 +225,6 @@ the current layouts buffers."
                         (revert-buffer nil t)))
                    'follow-link t))))
             (setq ad-list (cdr ad-list))))))))
-
-
-;; http://emacs.stackexchange.com/questions/13970/fixing-double-capitals-as-i-type
-;;;###autoload
-(defun dcaps-to-scaps ()
-  "Convert word in DOuble CApitals to Single Capitals."
-  (interactive)
-  (and (= ?w (char-syntax (char-before)))
-       (save-excursion
-         (and (if (called-interactively-p)
-                  (skip-syntax-backward "w")
-                (= -3 (skip-syntax-backward "w")))
-              (let (case-fold-search)
-                (looking-at "\\b[[:upper:]]\\{2\\}[[:lower:]]"))
-              (capitalize-word 1)))))
-
-
-;; 创建新行并缩进，暂时未使用
-;;http://emacsredux.com/blog/2013/03/26/smarter-open-line/
-;;;###autoload
-(defun my/smart-open-line ()
-  "Insert an empty line after the current line.
-Position the cursor at its beginning, according to the current mode."
-  (interactive)
-  (move-end-of-line nil)
-  (newline-and-indent))
-
-
-;;;###autoload
-(defun my/yank-to-end-of-line ()
-  "Yank to end of line."
-  (interactive)
-  (evil-yank (point) (point-at-eol)))
 
 
 ;;;###autoload
@@ -468,50 +356,6 @@ open and unsaved."
           (browse-url (concat "http://localhost:" hugo-service-port))))))
 
 ;;;###autoload
-(defun my/highlight-dwim ()
-  (interactive)
-  (if (use-region-p)
-      (progn
-        ;; (highlight-frame-toggle)
-        (deactivate-mark))
-    (symbol-overlay-put)))
-
-;;;###autoload
-(defun my/search-project-for-symbol-at-point ()
-  (interactive)
-  (if (use-region-p)
-      (progn
-        (consult-ripgrep (project-root (project-current))
-                         (buffer-substring (region-beginning) (region-end))))))
-
-;;;###autoload
-(defun my/clearn-highlight ()
-  (interactive)
-  (symbol-overlay-remove-all))
-
-;; 扩展选区
-;; 这个函数只是er/expand-region的引用
-;; mc/mark-next-like-this  -- multiple-cursors
-;;;###autoload
-(defun my/my-mc-mark-next-like-this ()
-  (interactive)
-  (er/expand-region 1))
-
-
-;;;###autoload
-(defun wrap-sexp-with-new-round-parens ()
-  (interactive)
-  (insert "()")
-  (backward-char)
-  (sp-forward-slurp-sexp))
-
-;;;###autoload
-(defun evil-paste-after-from-0 ()
-  (interactive)
-  (let ((evil-this-register ?0))
-    (call-interactively 'evil-paste-after)))
-
-;;;###autoload
 (defun my-erc-hook (match-type nick message)
   "Shows a growl notification, when user's nick was mentioned. If the buffer is currently not visible, makes it sticky."
   (unless (posix-string-match "^\\** *Users on #" message)
@@ -545,17 +389,6 @@ With PREFIX, cd to project root."
        end tell
   end tell
   " cmd))))
-
-;;;###autoload
-(defun zilongshanren/evil-quick-replace (beg end )
-  (interactive "r")
-  (when (evil-visual-state-p)
-    (evil-exit-visual-state)
-    (let ((selection (regexp-quote (buffer-substring-no-properties beg end))))
-      (setq command-string (format "%%s /%s//g" selection))
-      (minibuffer-with-setup-hook
-          (lambda () (backward-char 2))
-        (evil-ex command-string)))))
 
 ;;;###autoload
 (defun zilongshanren/git-project-root ()
@@ -654,135 +487,6 @@ e.g. Sunday, September 17, 2000."
     (zilongshanren//insert-org-or-md-img-link "./" (concat basename ".png")))
   (insert "\n"))
 
-(defun zilongshanren/org-archive-done-tasks ()
-  (interactive)
-  (org-map-entries
-   (lambda ()
-     (org-archive-subtree)
-     (setq org-map-continue-from (outline-previous-heading)))
-   "/DONE" 'file))
-
-(defun zilongshanren/org-archive-cancel-tasks ()
-  (interactive)
-  (org-map-entries
-   (lambda ()
-     (org-archive-subtree)
-     (setq org-map-continue-from (outline-previous-heading)))
-   "/CANCELLED" 'file))
-
-;; "https://github.com/vhallac/.emacs.d/blob/master/config/customize-org-agenda.el"
-(defun zilongshanren/skip-non-stuck-projects ()
-  "Skip trees that are not stuck projects"
-  (bh/list-sublevels-for-projects-indented)
-  (save-restriction
-    (widen)
-    (let ((next-headline (save-excursion (or (outline-next-heading) (point-max)))))
-      ;; VH: I changed this line from
-      ;; (if (bh/is-project-p)
-      (if (and (eq (point) (bh/find-project-task))
-               (bh/is-project-p))
-          (let* ((subtree-end (save-excursion (org-end-of-subtree t)))
-                 (has-next ))
-            (save-excursion
-              (forward-line 1)
-              (while (and (not has-next) (< (point) subtree-end) (re-search-forward "^\\*+ NEXT " subtree-end t))
-                (unless (member "WAITING" (org-get-tags-at))
-                  (setq has-next t))))
-            (if has-next
-                next-headline
-              nil)) ; a stuck project, has subtasks but no next task
-        next-headline))))
-
-;; 定义org-mode中的代码块
-(defun my/org-insert-src-block (src-code-type)
-  "Insert a `SRC-CODE-TYPE' type source code block in org-mode."
-  (interactive
-   (let ((src-code-types
-          '("emacs-lisp" "typescript" "python" "C" "sh" "java" "js" "clojure" "C++" "css"
-            "calc" "asymptote" "dot" "gnuplot" "ledger" "lilypond" "mscgen"
-            "octave" "oz" "plantuml" "R" "sass" "screen" "sql" "awk" "ditaa"
-            "haskell" "latex" "lisp" "matlab" "ocaml" "org" "perl" "ruby"
-            "scheme" "sqlite")))
-     (list (completing-read "Source code type: " src-code-types))))
-  (progn
-    (newline-and-indent)
-    (insert (format "#+BEGIN_SRC %s :results output\n" src-code-type))
-    (newline-and-indent)
-    (insert "#+END_SRC\n")
-    (previous-line 2)
-    (org-edit-src-code)))
-
-
-
-(defun zilong/org-summary-todo (n-done n-not-done)
-  "Switch entry to DONE when all subentries are done, to TODO otherwise."
-  (let (org-log-done org-log-states)    ; turn off logging
-    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
-
-(defun zilong/filter-by-tags ()
-  (let ((head-tags (org-get-tags-at)))
-    (member current-tag head-tags)))
-
-(defun zilong/org-clock-sum-today-by-tags (timerange &optional tstart tend noinsert)
-  (interactive "P")
-  (let* ((timerange-numeric-value (prefix-numeric-value timerange))
-         (files (org-add-archive-files (org-agenda-files)))
-         (include-tags '("WORK" "EMACS" "DREAM" "WRITING" "MEETING"
-                         "LIFE" "PROJECT" "OTHER"))
-         (tags-time-alist (mapcar (lambda (tag) `(,tag . 0)) include-tags))
-         (output-string "")
-         (tstart (or tstart
-                     (and timerange (equal timerange-numeric-value 4) (- (org-time-today) 86400))
-                     (and timerange (equal timerange-numeric-value 16) (org-read-date nil nil nil "Start Date/Time:"))
-                     (org-time-today)))
-         (tend (or tend
-                   (and timerange (equal timerange-numeric-value 16) (org-read-date nil nil nil "End Date/Time:"))
-                   (+ tstart 86400)))
-         h m file item prompt donesomething)
-    (while (setq file (pop files))
-      (setq org-agenda-buffer (if (file-exists-p file)
-                                  (org-get-agenda-file-buffer file)
-                                (error "No such file %s" file)))
-      (with-current-buffer org-agenda-buffer
-        (dolist (current-tag include-tags)
-          (org-clock-sum tstart tend 'zilong/filter-by-tags)
-          (setcdr (assoc current-tag tags-time-alist)
-                  (+ org-clock-file-total-minutes (cdr (assoc current-tag tags-time-alist)))))))
-    (while (setq item (pop tags-time-alist))
-      (unless (equal (cdr item) 0)
-        (setq donesomething t)
-        (setq h (/ (cdr item) 60)
-              m (- (cdr item) (* 60 h)))
-        (setq output-string (concat output-string (format "[-%s-] %.2d:%.2d\n" (car item) h m)))))
-    (unless donesomething
-      (setq output-string (concat output-string "[-Nothing-] Done nothing!!!\n")))
-    (unless noinsert
-      (insert output-string))
-    output-string))
-
-;;;###autoload
-(defun zilongshanren/hotspots ()
-  (interactive)
-  (require 'consult)
-  (setq-local source '(("Calendar" . (lambda ()  (browse-url "https://www.google.com/calendar/render")))
-                       ("RSS" . elfeed)
-                       ("Blog" . browse-hugo-maybe)
-                       ("Search" . (lambda () (call-interactively #'engine/search-google)))
-                       ("Random Todo" . org-random-entry)
-                       ("string edit" . separedit)
-                       ("Org Roam" . org-roam-find-file)
-                       ("Github" . (lambda() (helm-github-stars)))
-                       ("Prodigy" . (lambda() (prodigy)))
-
-                       ;;todo (calc-eval "(1+1)*3")
-                       ;; ("Calculator" . (lambda () (helm-calcul-expression)))
-                       ("Run current file" . (lambda () (my/run-current-file)))
-                       ("Agenda" . (lambda () (org-agenda "" "a")))
-                       ("sicp" . (lambda() (browse-url "http://mitpress.mit.edu/sicp/full-text/book/book-Z-H-4.html#%_toc_start")))))
-  (let* ((result (consult--read (mapcar 'car source) :prompt "zilong's hotpot ")))
-    (when result
-      (funcall (cdr (assoc result source))))))
-
 (defun kill-other-buffers ()
   "Kill all other buffers."
   (interactive)
@@ -798,20 +502,6 @@ e.g. Sunday, September 17, 2000."
 (defun date-to-timestamp (date)
   (interactive (list (read-from-minibuffer "" (format-time-string "%Y-%m-%d %H:%M:%S" (current-time)))))
   (message (kill-new (format-time-string "%s" (seconds-to-time (org-time-string-to-time date))))))
-
-;; 手动插入journal中的日期标题 -- 补日志的情况
-(defun my/insert-journal-date ()
-  "Use Emacs calendar to select a date, insert it in YYYY-MM-DD Day format,"
-  (interactive)
-  ;; Use org-read-date to get the date from the calendar
-  (let* ((selected-date (org-read-date nil t))
-         (timestamp (format-time-string "%Y-%m-%d %A" selected-date)))
-    (insert timestamp)
-    ;; (newline)
-    ;; (forward-line 1)
-    ;; (beginning-of-line)
-    )
-  )
 
 (defun switch-to-scratch-buffer ()
   (interactive)
@@ -854,11 +544,6 @@ earlier revisions.  Show up to LIMIT entries (non-nil means unlimited)."
 
 (defun terminal-notifier (title msg)
   (call-process "terminal-notifier" nil 0 nil "-group" "Emacs" "-title" title "-activate" "org.gnu.Emacs" "-message" msg))
-
-(defun disable-curly-bracket-electric-pair ()
-  (setq-local electric-pair-inhibit-predicate
-              `(lambda (c)
-                 (if (char-equal c ?{) t (,electric-pair-inhibit-predicate c)))))
 
 (defun my/project-try-local (dir)
   "Determine if DIR is a non-Git project."
@@ -927,14 +612,6 @@ earlier revisions.  Show up to LIMIT entries (non-nil means unlimited)."
     (citre-create-tags-file)
     (add-dir-local-variable 'prog-mode 'eval '(citre-mode))))
 
-(defun unfill-paragraph (&optional region)
-  "Takes a multi-line paragraph and makes it into a single line of text."
-  (interactive (progn (barf-if-buffer-read-only) '(t)))
-  (let ((fill-column (point-max))
-        ;; This would override `fill-column' if it's an integer.
-        (emacs-lisp-docstring-fill-column t))
-    (fill-paragraph nil region)))
-
 (defun my/rename-current-buffer-file ()
   "Renames current buffer and file it is visiting."
   (interactive)
@@ -973,28 +650,6 @@ earlier revisions.  Show up to LIMIT entries (non-nil means unlimited)."
   (if (eq major-mode #'org-mode)
       (call-interactively #'consult-org-heading)
     (call-interactively #'consult-imenu)))
-
-(defun av/auto-indent-method ()
-  "Automatically indent a method by adding two newlines.
-Puts point in the middle line as well as indent it by correct amount."
-  (interactive)
-  (newline-and-indent)
-  (newline-and-indent)
-  (forward-line -1)
-  (cond ((eq major-mode 'rust-mode)
-         (rust-mode-indent-line))
-        ((eq major-mode 'dart-mode)
-         (dart-indent-simple))
-        (t (c-indent-line-or-region))))
-
-(defun av/auto-indent-method-maybe ()
-  "Check if point is at a closing brace then auto indent."
-  (interactive)
-  (let ((char-at-point (char-after (point))))
-    (if (char-equal ?} char-at-point)
-        (av/auto-indent-method)
-      (newline-and-indent))))
-
 
 ;; 运行当前文件，执行
 ;;;###autoload
@@ -1043,65 +698,11 @@ Puts point in the middle line as well as indent it by correct amount."
    file-notify-descriptors))
 
 
-;; 将一个区域的json转为单行
-;;;###autoload
-(defun json-to-single-line (beg end)
-  "Collapse prettified json in region between BEG and END to a single line"
-  (interactive "r")
-  (if (use-region-p)
-      (save-excursion
-        (save-restriction
-          (narrow-to-region beg end)
-          (goto-char (point-min))
-          (while (re-search-forward "[[:space:]\n]+" nil t)
-            (replace-match " "))))
-    (print "This function operates on a region")))
-
-
 (defun my-project-imenu()
   (interactive)
   (if (bound-and-true-p eglot--managed-mode)
       (call-interactively 'consult-eglot-symbols) ;; 第三方包consult-eglot
     (call-interactively 'consult-imenu-multi))) ;; consult-imenu.el里有
-
-(defun my-auto-scroll-hack ()
-  (set (make-local-variable 'window-point-insertion-type) t))
-
-(add-hook 'shell-mode-hook 'my-auto-scroll-hack)
-
-
-;; 删除所有空行
-;;;###autoload
-(defun delete-all-empty-lines ()
-  (interactive)
-  (flush-lines "^$"))
-
-
-(defun replace-element-in-list (elem-src elem-dst ls &optional times comparison-fn)
-  (setq times (or times (length ls)))
-  (mapcar
-   (lambda (item)
-     (cond
-      ((and (> times 0)
-            (funcall (or comparison-fn #'eq) item elem-src))
-       (cl-decf times)
-       elem-dst)
-      (t
-       item)))
-   ls))
-
-
-
-;; 反转区域的所有字符，可按单个字母或数字进行反转
-;; reverse-region 只能按行反转
-;;;###autoload
-(defun my-reverse-region (beg end)
-  "Reverse characters between BEG and END."
-  (interactive "r")
-  (let ((region (buffer-substring beg end)))
-    (delete-region beg end)
-    (insert (nreverse region))))
-
 
 ;; Compilation for gcc / g++
 (defun ramz/code-compile ()
@@ -1124,37 +725,6 @@ Puts point in the middle line as well as indent it by correct amount."
 	       (format "ruby %s" (file-name-nondirectory buffer-file-name))
 	     (format "./%s" (file-name-sans-extension (file-name-nondirectory buffer-file-name)))))
   (async-shell-command run-command))
-
-
-(defun my/org-agenda-calculate-efforts (limit)
-  "Sum the efforts of scheduled entries up to LIMIT in the
-        agenda buffer."
-  (when limit
-    (let (total)
-      (save-excursion
-        (while (< (point) limit)
-          (when (member (org-get-at-bol 'type) '("scheduled" "past-scheduled"))
-            (push (org-entry-get (org-get-at-bol 'org-hd-marker) "Effort") total))
-          (forward-line)))
-      (org-duration-from-minutes
-       (cl-reduce #'+
-                  (mapcar #'org-duration-to-minutes
-                          (cl-remove-if-not 'identity total)))))))
-
-
-(defun my/org-agenda-insert-efforts ()
-  "Insert the efforts for each day inside the agenda buffer."
-  (save-excursion
-    (let (pos)
-      (while (setq pos (text-property-any
-                        (point) (point-max) 'org-agenda-date-header t))
-        (goto-char pos)
-        (end-of-line)
-        (insert-and-inherit (concat " ("
-                                    (my/org-agenda-calculate-efforts
-                                     (next-single-property-change (point) 'day))
-                                    ")"))
-        (forward-line)))))
 
 
 (defun font-installed-p (font-name)
@@ -1260,26 +830,6 @@ If NEWNAME is a directory, move file to it."
       (and (fboundp 'olivetti-mode) (olivetti-mode -1))
       (and (fboundp 'mixed-pitch-mode) (mixed-pitch-mode -1))
       (text-scale-set 0))))
-
-;; 将a b c转换为 'a','b','c'的格式
-(defun tmhourglass/convert-to-quoted-symbols (str)
-  "Convert input string STR to quoted symbols."
-  (interactive
-   (if (use-region-p)
-       (list (buffer-substring-no-properties (region-beginning) (region-end)))
-     (list (read-string "Please input need convert string: "))))
-  (let* ((input str)
-         (words (split-string input))
-         (quoted-words (mapcar (lambda (word) (format "'%s'" word)) words))
-         (result (mapconcat 'identity quoted-words ", ")))
-    (if (use-region-p)
-        (progn
-          (goto-char (region-end))
-          (newline)
-          (insert result))
-      (kill-new result)
-      (message "Copied to clipboard."))))
-
 
 ;; 生成符合以下条件的强密码，并拷贝到剪贴板
 (defun generate-strong-password (&optional length forbidden-words)
