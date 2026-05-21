@@ -172,6 +172,9 @@
 [submodule "elisp-refs"]
 	path = lib/elisp-refs
 	url = https://github.com/Wilfred/elisp-refs
+[submodule "emacs-rime"]
+	path = lib/emacs-rime
+	url = https://github.com/DogLooksGood/emacs-rime.git
 [submodule "emacsql"]
 	path = lib/emacsql
 	url = https://github.com/magit/emacsql.git

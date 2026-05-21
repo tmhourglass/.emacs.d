@@ -131,6 +131,7 @@
                        (require 'init-tabspace)
                        (require 'init-dired)
                        (require 'init-write)
+                       (require 'init-rime)
                        (require 'init-read)
                        (require 'init-dict)
                        (require 'init-translate-region)
