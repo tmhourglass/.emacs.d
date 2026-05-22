@@ -55,6 +55,9 @@
 [submodule "buffer-move"]
 	path = lib/buffer-move
 	url = https://github.com/lukhas/buffer-move
+[submodule "cache-path-from-shell"]
+	path = lib/cache-path-from-shell
+	url = https://github.com/manateelazycat/cache-path-from-shell.git
 [submodule "cal-china-x"]
 	path = lib/cal-china-x
 	url = https://github.com/xwl/cal-china-x

@@ -124,6 +124,10 @@
     (add-to-list 'exec-path-from-shell-variables var))
   (exec-path-from-shell-initialize))
 
+;; cache-path-from-shell
+(use-package cache-path-from-shell
+  :demand t
+  :after exec-path-from-shell)
 
 ;; History
 (use-package saveplace

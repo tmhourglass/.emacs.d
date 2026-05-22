@@ -64,11 +64,11 @@
 
 ;; 优化启动时间
 ;; 必须放在最前面才能收集到（use-package之后）
-(use-package benchmark-init
-  :demand t
-  :config
-  ;; To disable collection of benchmark data after init is done.
-  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+;; (use-package benchmark-init
+;;   :demand t
+;;   :config
+;;   ;; To disable collection of benchmark data after init is done.
+;;   (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
 
 ;; ═══════════════════════════════════════════
