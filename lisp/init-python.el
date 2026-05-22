@@ -34,10 +34,8 @@
   ;; 当缩进猜测失败时发出警告 nil-不发出警告
   (setq python-indent-guess-indent-offset-verbose nil))
 
-;; Live Coding in Python
-;; https://www.emacswiki.org/emacs/PythonProgrammingInEmacs
-;; 暂时没用到，功能待定，安装包也没找到，也未报错
-;; todo-borg
+;; Live Coding in Python 执行可视化
+;; https://github.com/donkirkby/live-py-plugin.git
 ;; (use-package live-py-mode)
 
 ;; virtual envrionment
