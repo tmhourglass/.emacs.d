@@ -335,6 +335,9 @@
 [submodule "json-mode"]
 	path = lib/json-mode
 	url = https://github.com/json-emacs/json-mode
+[submodule "json-reformat"]
+	path = lib/json-reformat
+	url = https://github.com/gongo/json-reformat
 [submodule "json-snatcher"]
 	path = lib/json-snatcher
 	url = https://github.com/Sterlingg/json-snatcher
